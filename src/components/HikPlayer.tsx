@@ -200,7 +200,7 @@ export const HikPlayer: React.FC<HikPlayerProps> = ({
   height = 400,
   maxSplit = 4,
   currentSplit = 1,
-  basePath = './dist',
+  basePath = '/dist',
   mode = 'live',
   startTime,
   endTime,
