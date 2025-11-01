@@ -1,0 +1,48 @@
+name: Frontend CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - dev
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Deploy to Development Server
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          HOST: ${{ secrets.HOST }}
+          USERNAME: ${{ secrets.USERNAME }}
+          PROJECT_NAME: ${{ secrets.PROJECT_NAME }}
+        run: |
+          echo "${SSH_PRIVATE_KEY}" > ssh_key
+          chmod 600 ssh_key
+          mkdir -p ~/.ssh
+          ssh-keyscan -H $HOST >> ~/.ssh/known_hosts
+
+          # Sync build folder to server
+          rsync -avz --delete --exclude='.env' -e "ssh -i ssh_key" --exclude='venv' --exclude='.git' ./ ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/home/zerodev/dev/${{ secrets.PROJECT_NAME }}
+          
+          ssh -i ssh_key $USERNAME@$HOST << 'EOF'
+            set -e
+            cd /home/zerodev/dev/${{ secrets.PROJECT_NAME }}
+            /home/zerodev/.nvm/versions/node/v22.20.0/bin/pnpm install
+            /home/zerodev/.nvm/versions/node/v22.20.0/bin/pnpm build
+            echo "${{ secrets.PASSWORD }}" | sudo -S rm -rf /var/www/html/hikvision-live/
+            echo "${{ secrets.PASSWORD }}" | sudo -S cp -r dist/ /var/www/html/hikvision-live/
+            echo "Frontend deployed successfully"
+          EOF
