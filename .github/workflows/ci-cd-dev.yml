@@ -35,7 +35,7 @@ jobs:
           ssh-keyscan -H $HOST >> ~/.ssh/known_hosts
 
           # Sync build folder to server
-          rsync -avz --delete --exclude='.env' -e "ssh -i ssh_key" --exclude='venv' --exclude='.git' ./ ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/home/zerodev/dev/${{ secrets.PROJECT_NAME }}
+          rsync -avz --delete --exclude='node_modules' --exclude='dist' --exclude='.env' -e "ssh -i ssh_key" --exclude='venv' --exclude='.git' ./ ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/home/zerodev/dev/${{ secrets.PROJECT_NAME }}
           
           ssh -i ssh_key $USERNAME@$HOST << 'EOF'
             set -e

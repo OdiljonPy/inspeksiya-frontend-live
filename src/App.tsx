@@ -3,7 +3,9 @@ import { useState } from 'react';
 import { Input } from '@/components/ui/input.tsx';
 
 function App() {
-  const [accessToken, setAccessToken] = useState('hcc.qDkUxx1RnfVspsSxZHfcU6SWjDCz6UzZ');
+  const [accessToken, setAccessToken] = useState(
+    'at.4l44ripl2p8nsy7q10y30pek237dsn9w-7lkehmxl5g-01q0ixy-69we0io7l'
+  );
   const [secretKey, setSecretKey] = useState('16071991aZ');
   const [serialNumber, setSerialNumber] = useState('FU5068433');
   const [domain, setDomain] = useState('https://isgp.hikcentralconnect.com');
