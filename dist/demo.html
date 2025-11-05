@@ -209,10 +209,11 @@
 <script src="/dist/timeBar.js"></script>
 <script>
   //初始化插件
+  var playWind = document.getElementById("playWind");
   var oPlugin = new JSPlugin({
     szId: "playWind",
-    iWidth: window.innerWidth,
-    iHeight: window.innerHeight,
+    iWidth: playWind.offsetWidth,
+    iHeight: playWind.offsetHeight,
     iMaxSplit: 1,
     iCurrentSplit: 1,
     szBasePath: "./dist",
