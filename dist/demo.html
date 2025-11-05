@@ -11,11 +11,6 @@
       font-size: 12px;
     }
 
-    .playContainer {
-      float: left;
-      display: inline-block;
-    }
-
     body {
       margin: 10px;
     }
@@ -23,10 +18,6 @@
     button {
       margin: 10px 10px;
       padding: 2px 5px;
-    }
-
-    .button_box {
-      float: left;
     }
 
     .button_box div {
@@ -47,17 +38,6 @@
       background: #fafafa;
       font-family: system-ui, sans-serif;
       color: #222;
-    }
-
-    .playContainer {
-      float: left;
-      display: inline-block;
-      margin-right: 20px;
-      border-radius: 10px;
-      overflow: hidden;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-      background: #fff;
-      padding: 10px;
     }
 
     .button_box {
@@ -117,30 +97,42 @@
       margin-top: 8px;
     }
   </style>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#3B82F6',
+            secondary: '#1F2937',
+            accent: '#10B981',
+          }
+        }
+      }
+    }
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 </head>
 
-<body>
-<div class="playContainer">
-  <div id="playWind" style="width: 600px; height: 400px;"></div>
-  <canvas id="timeBar" style="width: 600px; height: 40px;"></canvas>
-</div>
-<div class="button_box">
-  <div class="items">
-    <h5>Necessary Parameters</h5>
-    <div>
-      AccessToken:<input style="width: 200px;" id="accessToken" type="text" value="" />
-      Secret Key:<input style="width: 80px;" id="secretKey" type="text" value="" />
-      Serial Number:<input style="width: 80px;" id="serialNumber" type="text" value="" />
-      Channel Number:<input style="width: 30px;" id="channelNumber" type="text" value="" />
-      Domain:<input style="width: 180px;" id="domainValue" type="text" value="" />
-    </div>
-  </div>
+<body class="flex flex-col items-center">
+<div class="max-w-7xl space-y-4">
+  <div id="playWind" class="w-full rounded-lg overflow-hidden aspect-video"></div>
+  <!--  <div class="items hidden">-->
+  <!--    <h5>Necessary Parameters</h5>-->
+  <!--    <div>-->
+  <!--      AccessToken:<input style="width: 200px;" id="accessToken" type="text" value="" />-->
+  <!--      Secret Key:<input style="width: 80px;" id="secretKey" type="text" value="" />-->
+  <!--      Serial Number:<input style="width: 80px;" id="serialNumber" type="text" value="" />-->
+  <!--      Channel Number:<input style="width: 30px;" id="channelNumber" type="text" value="" />-->
+  <!--      Domain:<input style="width: 180px;" id="domainValue" type="text" value="" />-->
+  <!--    </div>-->
+  <!--  </div>-->
   <div class="items">
     <h5>Live View</h5>
-    Resolution:<select name="" id="videoResolution">
-    <option value="">standard definition</option>
-    <option value="hd">high definition</option>
-  </select>
+    Resolution:
+    <select name="" id="videoResolution">
+      <option value="">standard definition</option>
+      <option value="hd">high definition</option>
+    </select>
     <button type="button" onClick="realplay()">Start Live View</button>
     <button type="button" onClick="stop()">Stop Live View</button>
     <button type="button" onClick="GetOSDTime()">Get OSD Time</button>
@@ -152,49 +144,49 @@
     <button type="button" onClick="StopRealPlayAll()">Stop All</button>
     <button type="button" onClick="selectWnd()">select Window</button>
   </div>
-  <div class="items">
-    <div>talk
-      <button type="button" onClick="startEZUITalk()">start talk</button>
-      <button type="button" onClick="stopEZUITalk()">stop talk</button>
-    </div>
-  </div>
-  <div class="items">
-    <h5>Playback View</h5>
-    <div>
-      Storage Type
-      <select name="" id="storageType">
-        <option value="local">local</option>
-        <option value="cloud">cloud</option>
-      </select>
-      Start Time <input type="text" id="sDate" value="2024-07-25T16:27:00Z" /> -
-      End Time <input type="text" id="eDate" value="2024-07-25T16:30:00Z" />
-    </div>
-    <button type="button" onClick="playback()">Start Playback</button>
-    <button type="button" onClick="Pause()">Pause</button>
-    <button type="button" onClick="Resume()">Resume</button>
-    <button type="button" onClick="stop()">Stop Playback</button>
-    <button type="button" onClick="Fast()">Fast</button>
-    <button type="button" onClick="Slow()">Slow</button>
-    <button type="button" onclick="record()">Start Recording</button>
-    <button type="button" onclick="stopRecord()">Stop Recording</button>
-    <br />
-    <h5>File stream download</h5>
-    <button type="button" onclick="downloadFile()">Start File Download</button>
-    <button type="button" onclick="stopDownloadFile()">Stop File Download</button>
-  </div>
-  <div class="items">
-    <h5>Transfor To Mp4</h5>
-    <div>url:<input style="width: 300px;" id="beforeTransforVideoUrl" type="text" value="./down.ps" />
-    </div>
-    <button type="button" onclick="startVideoToMp4()">Transfor</button>
-  </div>
-  <div class="items">
-    <h5>TimeBar</h5>
-    <button type="button" onclick="createTimeBar()">create TimeBar</button>
-    <!-- <button type="button" onclick="addFileAndRepaint()">Repaint TimeBar</button> -->
-    <button type="button" onclick="expand()">expand</button>
-    <button type="button" onclick="narrow()">narrow</button>
-  </div>
+  <!--  <div class="items">-->
+  <!--    <div>talk-->
+  <!--      <button type="button" onClick="startEZUITalk()">start talk</button>-->
+  <!--      <button type="button" onClick="stopEZUITalk()">stop talk</button>-->
+  <!--    </div>-->
+  <!--  </div>-->
+  <!--  <div class="items">-->
+  <!--    <h5>Playback View</h5>-->
+  <!--    <div>-->
+  <!--      Storage Type-->
+  <!--      <select name="" id="storageType">-->
+  <!--        <option value="local">local</option>-->
+  <!--        <option value="cloud">cloud</option>-->
+  <!--      </select>-->
+  <!--      Start Time <input type="text" id="sDate" value="2024-07-25T16:27:00Z" /> - -->
+  <!--      End Time <input type="text" id="eDate" value="2024-07-25T16:30:00Z" />-->
+  <!--    </div>-->
+  <!--    <button type="button" onClick="playback()">Start Playback</button>-->
+  <!--    <button type="button" onClick="Pause()">Pause</button>-->
+  <!--    <button type="button" onClick="Resume()">Resume</button>-->
+  <!--    <button type="button" onClick="stop()">Stop Playback</button>-->
+  <!--    <button type="button" onClick="Fast()">Fast</button>-->
+  <!--    <button type="button" onClick="Slow()">Slow</button>-->
+  <!--    <button type="button" onclick="record()">Start Recording</button>-->
+  <!--    <button type="button" onclick="stopRecord()">Stop Recording</button>-->
+  <!--    <br />-->
+  <!--    <h5>File stream download</h5>-->
+  <!--    <button type="button" onclick="downloadFile()">Start File Download</button>-->
+  <!--    <button type="button" onclick="stopDownloadFile()">Stop File Download</button>-->
+  <!--  </div>-->
+  <!--  <div class="items">-->
+  <!--    <h5>Transfor To Mp4</h5>-->
+  <!--    <div>url:<input style="width: 300px;" id="beforeTransforVideoUrl" type="text" value="./down.ps" />-->
+  <!--    </div>-->
+  <!--    <button type="button" onclick="startVideoToMp4()">Transfor</button>-->
+  <!--  </div>-->
+  <!--  <div class="items">-->
+  <!--    <h5>TimeBar</h5>-->
+  <!--    <button type="button" onclick="createTimeBar()">create TimeBar</button>-->
+  <!--     <button type="button" onclick="addFileAndRepaint()">Repaint TimeBar</button> -->
+  <!--    <button type="button" onclick="expand()">expand</button>-->
+  <!--    <button type="button" onclick="narrow()">narrow</button>-->
+  <!--  </div>-->
   <div class="items">
     <h5>Zoom</h5>
     <button type="button" onClick="EnableZoom()">Enable Digital Zoom</button>
@@ -209,21 +201,22 @@
   </div>
   <div class="items">
     <h5>Window Division</h5>
-    <button type="button" onClick="arrangeWindow(1)">1x1</button>
-    <button type="button" onClick="arrangeWindow(2)">2x2</button>
-    <button type="button" onClick="arrangeWindow(3)">3x3</button>
-    <button type="button" onClick="arrangeWindow(4)">4x4</button>
-    <button type="button" onClick="fullScreenSingle()">Full Screen (A Window)</button>
-    <button type="button" onClick="fullSreen()">Full Screen (All Windows)</button>
+    <!--    <button type="button" onClick="arrangeWindow(1)">1x1</button>-->
+    <!--    <button type="button" onClick="arrangeWindow(2)">2x2</button>-->
+    <!--    <button type="button" onClick="arrangeWindow(3)">3x3</button>-->
+    <!--    <button type="button" onClick="arrangeWindow(4)">4x4</button>-->
+    <button type="button" onClick="fullScreenSingle()">Full Screen</button>
+    <!--    <button type="button" onClick="fullSreen()">Full Screen (All Windows)</button>-->
   </div>
-  <div class="items">
-    <h5>Other</h5>
-    <button onClick="Destroy()">Destroy</button>
-  </div>
-  <div class="items">
-    <div>Prompt</div>
-    <div id="error" style="color:red"></div>
-  </div>
+  <!--  <div class="items">-->
+  <!--    <h5>Other</h5>-->
+  <!--    <button onClick="Destroy()">Destroy</button>-->
+  <!--  </div>-->
+  <!--  <div class="items">-->
+  <!--    <div>Prompt</div>-->
+  <!--    <div id="error" style="color:red"></div>-->
+  <!--  </div>-->
+</div>
 </div>
 <script src="/dist/jsPlugin-3.0.0.min.js"></script>
 <script src="/dist/timeBar.js"></script>
@@ -231,10 +224,10 @@
   //初始化插件
   var oPlugin = new JSPlugin({
     szId: "playWind",
-    iWidth: 600,
-    iHeight: 400,
-    iMaxSplit: 4,
-    iCurrentSplit: 2,
+    iWidth: window.innerWidth,
+    iHeight: window.innerHeight,
+    iMaxSplit: 1,
+    iCurrentSplit: 1,
     szBasePath: "./dist",
     oStyle: {
       border: "#343434",
@@ -865,7 +858,7 @@
       console.log("stopRecord success")
     }, function () {
       console.log("stopRecord failed")
-    });;
+    });
   }
   function fullSreen() {
     oPlugin.JS_FullScreenDisplay(true).then(function () {
