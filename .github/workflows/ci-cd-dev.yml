@@ -40,8 +40,6 @@ jobs:
           ssh -i ssh_key $USERNAME@$HOST << 'EOF'
             set -e
             cd /home/zerodev/dev/${{ secrets.PROJECT_NAME }}
-            /home/zerodev/.nvm/versions/node/v22.20.0/bin/pnpm install
-            /home/zerodev/.nvm/versions/node/v22.20.0/bin/pnpm build
             echo "${{ secrets.PASSWORD }}" | sudo -S rm -rf /var/www/html/hikvision-live/
             echo "${{ secrets.PASSWORD }}" | sudo -S cp -r dist/ /var/www/html/hikvision-live/
             echo "Frontend deployed successfully"
