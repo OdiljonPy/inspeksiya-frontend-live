@@ -411,7 +411,24 @@
         //console.log(iWndIndex);
       },
       windowFullCcreenChange: function (bFull) {  //全屏切换回调
-        //console.log(bFull);
+        console.log("Full screen changed to " + bFull);
+        setTimeout(() => {
+          if (bFull) {
+            oPlugin.JS_Resize(screen.availWidth, screen.availHeight).then(function () {
+              console.log("JS_Resize to full screen success");
+            }, function () {
+              console.log("JS_Resize to full screen failed");
+            });
+          } else {
+            var w = playWind.offsetWidth;
+            var h = playWind.offsetHeight;
+            oPlugin.JS_Resize(w, h).then(function () {
+              console.log("JS_Resize to normal success");
+            }, function () {
+              console.log("JS_Resize to normal failed");
+            });
+          }
+        }, 100);
       },
       firstFrameCallBack: function (iWndIndex) {  //首帧显示回调
         console.log(iWndIndex)
@@ -865,11 +882,15 @@
   }
 
   window.onresize = function () {
-    oPlugin.JS_Resize(600, 400).then(function () {
-      console.log("JS_Resize success")
-    }, function () {
-      console.log("JS_Resize failed")
-    })
+    if (playWind) {
+      var w = playWind.offsetWidth;
+      var h = playWind.offsetHeight;
+      oPlugin.JS_Resize(w, h).then(function () {
+        console.log("JS_Resize success to " + w + "x" + h);
+      }, function () {
+        console.log("JS_Resize failed");
+      });
+    }
   }
 
   function startEZUITalk() {
