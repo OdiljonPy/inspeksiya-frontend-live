@@ -910,11 +910,14 @@
   function autoArrangeAndPlay() {
     let num = cameras.length;
     if (num === 0) return;
-    if (num > 16) num = 16; // Limit to plugin max
+    let n = Math.ceil(Math.sqrt(num));
+    if (n > 4) n = 4; // max 4x4=16
+    let totalWindows = n * n;
     let videoResolution = document.getElementById("videoResolution").value;
-    oPlugin.JS_ArrangeWindow(num, false).then(() => {
-      console.log(`Arranged ${num} windows`);
+    oPlugin.JS_ArrangeWindow(n, false).then(() => {
+      console.log(`Arranged ${n}x${n} = ${totalWindows} windows for ${num} cameras`);
       cameras.forEach((cam, w) => {
+        if (w >= totalWindows) return;
         if (cam.secretKey) {
           oPlugin.JS_SetSecretKey(w, cam.secretKey).then(() => {
             console.log(`Set secret key for window ${w}`);
