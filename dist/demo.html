@@ -103,16 +103,16 @@
 <body class="flex flex-col items-center">
 <div class="max-w-7xl space-y-4">
   <div id="playWind" class="w-full rounded-lg overflow-hidden aspect-video"></div>
-    <div class="items hidden">
-      <h5>Necessary Parameters</h5>
-      <div>
-        AccessToken:<input style="width: 200px;" id="accessToken" type="text" value="" />
-        Secret Key:<input style="width: 80px;" id="secretKey" type="text" value="" />
-        Serial Number:<input style="width: 80px;" id="serialNumber" type="text" value="" />
-        Channel Number:<input style="width: 30px;" id="channelNumber" type="text" value="" />
-        Domain:<input style="width: 180px;" id="domainValue" type="text" value="" />
-      </div>
+  <div class="items hidden">
+    <h5>Necessary Parameters</h5>
+    <div>
+      AccessToken:<input style="width: 200px;" id="accessToken" type="text" value="" />
+      Secret Key:<input style="width: 80px;" id="secretKey" type="text" value="" />
+      Serial Number:<input style="width: 80px;" id="serialNumber" type="text" value="" />
+      Channel Number:<input style="width: 30px;" id="channelNumber" type="text" value="" />
+      Domain:<input style="width: 180px;" id="domainValue" type="text" value="" />
     </div>
+  </div>
   <div class="items">
     <h5>Live View</h5>
     Resolution:
@@ -214,7 +214,7 @@
     szId: "playWind",
     iWidth: playWind.offsetWidth,
     iHeight: playWind.offsetHeight,
-    iMaxSplit: 1,
+    iMaxSplit: 16,
     iCurrentSplit: 1,
     szBasePath: "./dist",
     oStyle: {
@@ -223,6 +223,7 @@
       background: "#4C4B4B"
     }
   })
+  var cameras = [];  // Global array for cameras
   initPlugin()
 
   var iWind = 0          //窗口索引
@@ -431,10 +432,13 @@
   }
   let realplayFinished = true
   function realplay() {
+    if (cameras.length > 0) {
+      alert('Multiple cameras auto-loaded. Use "Stop All" to stop before starting manual single view.');
+      return;
+    }
     if (!realplayFinished) {
       return
     }
-    var accessToken = document.getElementById("accessToken").value
     var secretKey = document.getElementById("secretKey").value
     var accessToken = document.getElementById("accessToken").value
     var serialNumber = document.getElementById("serialNumber").value
@@ -902,27 +906,110 @@
     })
   }
 
-</script>
-<script>
-  function setFromUrl() {
-    const params = new URLSearchParams(window.location.search)
+  // Auto-arrange and play multiple cameras
+  function autoArrangeAndPlay() {
+    let num = cameras.length;
+    if (num === 0) return;
+    if (num > 16) num = 16; // Limit to plugin max
+    let videoResolution = document.getElementById("videoResolution").value;
+    oPlugin.JS_ArrangeWindow(num, false).then(() => {
+      console.log(`Arranged ${num} windows`);
+      cameras.forEach((cam, w) => {
+        if (cam.secretKey) {
+          oPlugin.JS_SetSecretKey(w, cam.secretKey).then(() => {
+            console.log(`Set secret key for window ${w}`);
+          }).catch((e) => {
+            console.log(`Set secret key failed for window ${w}`, e);
+          });
+        }
+        let url = `ezopen://open.ezviz.com/${cam.serialNumber}/${cam.channelNumber}`;
+        if (videoResolution === "hd") {
+          url += ".hd.live";
+        } else {
+          url += ".live";
+        }
+        oPlugin.JS_Play(url, {
+          playURL: url,
+          ezuikit: true,
+          env: { domain: cam.domain },
+          accessToken: cam.accessToken,
+          mode: "media"
+        }, w).then(() => {
+          console.log(`Live view started for window ${w} (${cam.serialNumber})`);
+        }).catch((e) => {
+          console.log(`Live view failed for window ${w} (${cam.serialNumber})`, e);
+        });
+      });
+    }).catch((e) => {
+      console.log("Arrange windows failed", e);
+    });
+  }
 
+  // Set params from URL, including arrays
+  function setFromUrl() {
+    const params = new URLSearchParams(window.location.search);
     const map = {
       token: "accessToken",
       key: "secretKey",
-      sn: "serialNumber",
-      ch: "channelNumber",
       domain: "domainValue"
-    }
-
+    };
     Object.entries(map).forEach(([urlKey, inputId]) => {
-      const v = params.get(urlKey)
-      if (v) document.getElementById(inputId).value = v
-    })
+      const v = params.get(urlKey);
+      if (v) document.getElementById(inputId).value = v;
+    });
+    // Handle arrays
+    let sns = params.getAll('sn');
+    let chs = params.getAll('ch');
+    let keys = params.getAll('key');
+    if (keys.length === 0 && params.get('key')) keys = new Array(sns.length).fill(params.get('key'));
+    let tokens = params.getAll('token');
+    if (tokens.length === 0 && params.get('token')) tokens = new Array(sns.length).fill(params.get('token'));
+    let domains_arr = params.getAll('domain');
+    if (domains_arr.length === 0 && params.get('domain')) domains_arr = new Array(sns.length).fill(params.get('domain'));
+    cameras = [];
+    for (let i = 0; i < sns.length; i++) {
+      cameras.push({
+        serialNumber: sns[i],
+        channelNumber: parseInt(chs[i] || 1),
+        secretKey: keys[i] || '',
+        accessToken: tokens[i] || params.get('token') || '',
+        domain: domains_arr[i] || params.get('domain') || ''
+      });
+    }
+    // Set single inputs for display
+    if (sns.length === 1) {
+      document.getElementById("serialNumber").value = sns[0];
+      document.getElementById("channelNumber").value = chs[0] || 1;
+    } else if (sns.length > 1) {
+      document.getElementById("serialNumber").value = sns.join(',');
+      document.getElementById("channelNumber").value = chs.join(',');
+    }
   }
 
-  // call on load
+</script>
+<script>
+  // Run on load
   setFromUrl();
+  const necessaryDiv = document.querySelector('.items.hidden');
+  if (cameras.length > 0) {
+    // Hide necessary params, show list, auto start
+    necessaryDiv.classList.add('hidden');
+    let listDiv = document.createElement('div');
+    listDiv.className = 'items';
+    listDiv.innerHTML = `
+    <h5>Auto-loaded Cameras (${cameras.length})</h5>
+    <ul>
+      ${cameras.map((c, i) => `<li>Window ${i}: SN ${c.serialNumber}, Ch ${c.channelNumber}</li>`).join('')}
+    </ul>
+    <button type="button" onClick="StopRealPlayAll()">Stop All Live Views</button>
+  `;
+    necessaryDiv.insertAdjacentElement('afterend', listDiv);
+    // Start after init
+    setTimeout(autoArrangeAndPlay, 500);
+  } else {
+    // Show manual inputs
+    necessaryDiv.classList.remove('hidden');
+  }
 </script>
 </body>
 
