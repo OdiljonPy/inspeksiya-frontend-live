@@ -433,7 +433,7 @@
   let realplayFinished = true
   function realplay() {
     if (cameras.length > 0) {
-      alert('Multiple cameras auto-loaded. Use "Stop All" to stop before starting manual single view.');
+      alert('Multiple cameras auto-loaded. Use "Start All Live Views" to start them or "Stop All" to stop before starting manual single view.');
       return;
     }
     if (!realplayFinished) {
@@ -1001,6 +1001,7 @@
     <ul>
       ${cameras.map((c, i) => `<li>Window ${i}: SN ${c.serialNumber}, Ch ${c.channelNumber}</li>`).join('')}
     </ul>
+    <button type="button" onClick="autoArrangeAndPlay()">Start All Live Views</button>
     <button type="button" onClick="StopRealPlayAll()">Stop All Live Views</button>
   `;
     necessaryDiv.insertAdjacentElement('afterend', listDiv);
