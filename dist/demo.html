@@ -89,20 +89,17 @@
       border: 1px solid #ccc;
       border-radius: 4px;
     }
-
-    #timeBar {
-      border: 1px solid #ddd;
-      border-radius: 6px;
-      background: #fff;
-      margin-top: 8px;
-    }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 </head>
 
 <body class="flex flex-col items-center">
-<div class="max-w-7xl space-y-4">
-  <div id="playWind" class="w-full rounded-lg overflow-hidden aspect-video"></div>
+<div class="w-full space-y-4">
+  <div id="playWind" class="w-full bg-black rounded-lg overflow-hidden aspect-video"></div>
+  <div class="items">
+    <button type="button" onClick="autoArrangeAndPlay()">Start All Live Views</button>
+    <button type="button" onClick="StopRealPlayAll()">Stop All Live Views</button>
+  </div>
   <div class="items hidden">
     <h5>Necessary Parameters</h5>
     <div>
@@ -993,26 +990,8 @@
 <script>
   // Run on load
   setFromUrl();
-  const necessaryDiv = document.querySelector('.items.hidden');
   if (cameras.length > 0) {
-    // Hide necessary params, show list, auto start
-    necessaryDiv.classList.add('hidden');
-    let listDiv = document.createElement('div');
-    listDiv.className = 'items';
-    listDiv.innerHTML = `
-    <h5>Auto-loaded Cameras (${cameras.length})</h5>
-    <ul>
-      ${cameras.map((c, i) => `<li>Window ${i}: SN ${c.serialNumber}, Ch ${c.channelNumber}</li>`).join('')}
-    </ul>
-    <button type="button" onClick="autoArrangeAndPlay()">Start All Live Views</button>
-    <button type="button" onClick="StopRealPlayAll()">Stop All Live Views</button>
-  `;
-    necessaryDiv.insertAdjacentElement('afterend', listDiv);
-    // Start after init
     setTimeout(autoArrangeAndPlay, 500);
-  } else {
-    // Show manual inputs
-    necessaryDiv.classList.remove('hidden');
   }
 </script>
 </body>
