@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="uz">
 
 <head>
   <meta charset="UTF-8" />
@@ -100,36 +100,30 @@
 <div class="w-full space-y-4">
   <div id="playWind" class="w-full bg-black rounded-lg overflow-hidden aspect-video"></div>
   <div class="items">
-    <button type="button" onClick="autoArrangeAndPlay()">Start All Live Views</button>
-    <button type="button" onClick="StopRealPlayAll()">Stop All Live Views</button>
+    <button type="button" onClick="autoArrangeAndPlay()">Barcha jonli ko'rinishlarni boshlash</button>
+    <button type="button" onClick="StopRealPlayAll()">Barcha jonli ko'rinishlarni to'xtatish</button>
   </div>
   <div class="items hidden">
-    <h5>Necessary Parameters</h5>
+    <h5>Zaruriy parametrlar</h5>
     <div>
-      AccessToken:<input style="width: 200px;" id="accessToken" type="text" value="" />
-      Secret Key:<input style="width: 80px;" id="secretKey" type="text" value="" />
-      Serial Number:<input style="width: 80px;" id="serialNumber" type="text" value="" />
-      Channel Number:<input style="width: 30px;" id="channelNumber" type="text" value="" />
-      Domain:<input style="width: 180px;" id="domainValue" type="text" value="" />
+      Kirish tokeni:<input style="width: 200px;" id="accessToken" type="text" value="" />
+      Maxfiy kalit:<input style="width: 80px;" id="secretKey" type="text" value="" />
+      Seriya raqami:<input style="width: 80px;" id="serialNumber" type="text" value="" />
+      Kanal raqami:<input style="width: 30px;" id="channelNumber" type="text" value="" />
+      Domen:<input style="width: 180px;" id="domainValue" type="text" value="" />
     </div>
   </div>
   <div class="items">
-    <h5>Live View</h5>
-    Resolution:
-    <select name="" id="videoResolution">
-      <option value="">standard definition</option>
-      <option value="hd">high definition</option>
-    </select>
-    <button type="button" onClick="realplay()">Start Live View</button>
-    <button type="button" onClick="stop()">Stop Live View</button>
-    <button type="button" onClick="GetOSDTime()">Get OSD Time</button>
-    <button type="button" onclick="record()">Start Recording</button>
-    <button type="button" onclick="stopRecord()">Stop Recording</button>
-    <button type="button" onClick="CapturePicture('BMP')">Capture (BMP)</button>
-    <button type="button" onClick="CapturePicture('JPEG')">Capture (JPEG)</button>
+    <button type="button" onClick="realplay()">Jonli ko'rinishni boshlash</button>
+    <button type="button" onClick="stop()">Jonli ko'rinishni to'xtatish</button>
+    <button type="button" onClick="GetOSDTime()">OSD vaqtini olish</button>
+    <button type="button" onclick="record()">Yozuvni boshlash</button>
+    <button type="button" onclick="stopRecord()">Yozuvni to'xtatish</button>
+    <button type="button" onClick="CapturePicture('BMP')">Suratga olish (BMP)</button>
+    <button type="button" onClick="CapturePicture('JPEG')">Suratga olish (JPEG)</button>
     <br />
-    <button type="button" onClick="StopRealPlayAll()">Stop All</button>
-    <button type="button" onClick="selectWnd()">select Window</button>
+    <button type="button" onClick="StopRealPlayAll()">Hammasini to'xtatish</button>
+    <button type="button" onClick="selectWnd()">Oynani tanlash</button>
   </div>
   <!--  <div class="items">-->
   <!--    <div>talk-->
@@ -175,24 +169,24 @@
   <!--    <button type="button" onclick="narrow()">narrow</button>-->
   <!--  </div>-->
   <div class="items">
-    <h5>Zoom</h5>
-    <button type="button" onClick="EnableZoom()">Enable Digital Zoom</button>
-    <button type="button" onClick="DisableZoom()">Disable Digital Zoom</button>
+    <h5>Yaqinlashtirish</h5>
+    <button type="button" onClick="EnableZoom()">Raqamli zoomni yoqish</button>
+    <button type="button" onClick="DisableZoom()">Raqamli zoomni o'chirish</button>
   </div>
   <div class="items">
-    <h5>Audio</h5>
-    <button type="button" onClick="OpenSound()">Turn on Audio</button>
-    <button type="button" onClick="GetVolume()">Get Volume</button>
-    Volume:<input type="range" min="0" max="100" id="volume" step="1" value="50" onchange=SetVolume() />
-    <button type="button" onClick="CloseSound()">Turn off Audio</button>
+    <h5>Ovoz</h5>
+    <button type="button" onClick="OpenSound()">Ovozni yoqish</button>
+    <button type="button" onClick="GetVolume()">Ovoz balandligini olish</button>
+    Ovoz balandligi:<input type="range" min="0" max="100" id="volume" step="1" value="50" onchange=SetVolume() />
+    <button type="button" onClick="CloseSound()">Ovozni o'chirish</button>
   </div>
   <div class="items">
-    <h5>Window Division</h5>
+    <h5>Oyna bo'linishi</h5>
     <!--    <button type="button" onClick="arrangeWindow(1)">1x1</button>-->
     <!--    <button type="button" onClick="arrangeWindow(2)">2x2</button>-->
     <!--    <button type="button" onClick="arrangeWindow(3)">3x3</button>-->
     <!--    <button type="button" onClick="arrangeWindow(4)">4x4</button>-->
-    <button type="button" onClick="fullScreenSingle()">Full Screen</button>
+    <button type="button" onClick="fullScreenSingle()">To'liq ekran</button>
     <!--    <button type="button" onClick="fullSreen()">Full Screen (All Windows)</button>-->
   </div>
   <!--  <div class="items">-->
