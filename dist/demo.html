@@ -438,7 +438,8 @@
       },
       firstFrameCallBack: function (iWndIndex) {  //首帧显示回调
         console.log(iWndIndex)
-        if (shouldCapture) {
+        var channelNumber = document.getElementById("channelNumber").value
+        if (shouldCapture && channelNumber?.length === 1) {
           CapturePicture('JPEG');
         }
       },
