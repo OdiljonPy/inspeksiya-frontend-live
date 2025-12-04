@@ -226,6 +226,7 @@
     }
   })
   var cameras = [];  // Global array for cameras
+  let shouldCapture = false;  // Flag for capture=true param
   initPlugin()
 
   var iWind = 0          //窗口索引
@@ -437,6 +438,9 @@
       },
       firstFrameCallBack: function (iWndIndex) {  //首帧显示回调
         console.log(iWndIndex)
+        if (shouldCapture) {
+          CapturePicture('JPEG');
+        }
       },
       performanceLack: function () {  //性能不足回调
         //
@@ -1009,6 +1013,10 @@
     } else if (sns.length > 1) {
       document.getElementById("serialNumber").value = sns.join(',');
       document.getElementById("channelNumber").value = chs.join(',');
+    }
+    // Check for capture param
+    if (params.get('capture') === 'true') {
+      shouldCapture = true;
     }
   }
 
