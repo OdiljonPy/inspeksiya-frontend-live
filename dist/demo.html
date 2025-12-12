@@ -216,7 +216,6 @@
     szId: "playWind",
     iWidth: playWind.offsetWidth,
     iHeight: playWind.offsetHeight,
-    iMaxSplit: 16,
     iCurrentSplit: 1,
     szBasePath: "./dist",
     oStyle: {
@@ -939,7 +938,6 @@
     let num = cameras.length;
     if (num === 0) return;
     let n = Math.ceil(Math.sqrt(num));
-    if (n > 4) n = 4; // max 4x4=16
     let totalWindows = n * n;
     let videoResolution = document.getElementById("videoResolution").value;
     oPlugin.JS_ArrangeWindow(n, false).then(() => {
