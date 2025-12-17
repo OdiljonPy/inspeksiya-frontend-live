@@ -97,7 +97,9 @@
       position: relative;
     }
 
-    .offline-overlay {
+    .offline-overlay,
+    .loading-overlay,
+    .empty-overlay {
       position: absolute;
       top: 0;
       left: 0;
@@ -107,7 +109,6 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #ff4444;
       font-size: 24px;
       font-weight: bold;
       z-index: 1000;
@@ -116,7 +117,40 @@
       text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
     }
 
-    .offline-overlay.hidden {
+    .offline-overlay {
+      color: #ff4444;
+    }
+
+    .loading-overlay {
+      color: #4a9eff;
+    }
+
+    .loading-overlay::after {
+      content: '';
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(74, 158, 255, 0.3);
+      border-top-color: #4a9eff;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-left: 10px;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .empty-overlay {
+      color: #888888;
+      background: rgba(0, 0, 0, 0.5);
+    }
+
+    .offline-overlay.hidden,
+    .loading-overlay.hidden,
+    .empty-overlay.hidden {
       display: none;
     }
   </style>
@@ -256,6 +290,9 @@
     let shouldCapture = false  // Flag for capture=true param
     var offlineStatus = {}  // Track offline status for each window: { windowIndex: true/false }
     var offlineOverlays = {}  // Store overlay elements for each window
+    var loadingOverlays = {}  // Store loading overlay elements for each window
+    var emptyOverlays = {}  // Store empty window overlay elements
+    var windowCameraMap = {}  // Map window index to camera index: { windowIndex: cameraIndex }
     initPlugin()
 
     var iWind = 0          //窗口索引
@@ -438,8 +475,10 @@
       offlineStatus[windowIndex] = true
       var overlay = getOfflineOverlay(windowIndex)
       overlay.classList.remove('hidden')
+      // Hide loading when showing offline
+      hideLoading(windowIndex)
       // Position overlay over the specific window
-      updateOverlayPosition(windowIndex)
+      updateOverlayPosition(windowIndex, overlay)
     }
 
     // Hide offline status for a window
@@ -452,8 +491,15 @@
     }
 
     // Update overlay position based on window grid layout
-    function updateOverlayPosition(windowIndex) {
-      var overlay = offlineOverlays[windowIndex]
+    function updateOverlayPosition(windowIndex, overlay) {
+      // If overlay not provided, update all overlays for this window
+      if (!overlay) {
+        if (offlineOverlays[windowIndex]) updateOverlayPosition(windowIndex, offlineOverlays[windowIndex])
+        if (loadingOverlays[windowIndex]) updateOverlayPosition(windowIndex, loadingOverlays[windowIndex])
+        if (emptyOverlays[windowIndex]) updateOverlayPosition(windowIndex, emptyOverlays[windowIndex])
+        return
+      }
+
       if (!overlay) return
 
       // Get current window arrangement
@@ -464,6 +510,12 @@
         overlay.style.left = '0'
         overlay.style.width = '100%'
         overlay.style.height = '100%'
+        overlay.style.borderRadius = '8px'
+        // Adjust font size for single window
+        var containerWidth = playWind.offsetWidth
+        var containerHeight = playWind.offsetHeight
+        var fontSize = Math.min(containerWidth / 15, containerHeight / 10, 24)
+        overlay.style.fontSize = Math.max(16, fontSize) + 'px'
         return
       }
 
@@ -501,6 +553,74 @@
       Object.keys(offlineOverlays).forEach(function (windowIndex) {
         updateOverlayPosition(parseInt(windowIndex))
       })
+      Object.keys(loadingOverlays).forEach(function (windowIndex) {
+        updateOverlayPosition(parseInt(windowIndex))
+      })
+      Object.keys(emptyOverlays).forEach(function (windowIndex) {
+        updateOverlayPosition(parseInt(windowIndex))
+      })
+    }
+
+    // Create or get loading overlay for a window
+    function getLoadingOverlay(windowIndex) {
+      if (!loadingOverlays[windowIndex]) {
+        var overlay = document.createElement('div')
+        overlay.className = 'loading-overlay hidden'
+        overlay.id = 'loading-overlay-' + windowIndex
+        overlay.textContent = 'Yuklanmoqda'
+        playWind.appendChild(overlay)
+        loadingOverlays[windowIndex] = overlay
+      }
+      return loadingOverlays[windowIndex]
+    }
+
+    // Show loading status for a window
+    function showLoading(windowIndex) {
+      var overlay = getLoadingOverlay(windowIndex)
+      overlay.classList.remove('hidden')
+      // Hide other overlays when showing loading
+      hideOffline(windowIndex)
+      hideEmpty(windowIndex)
+      updateOverlayPosition(windowIndex, overlay)
+    }
+
+    // Hide loading status for a window
+    function hideLoading(windowIndex) {
+      var overlay = loadingOverlays[windowIndex]
+      if (overlay) {
+        overlay.classList.add('hidden')
+      }
+    }
+
+    // Create or get empty overlay for a window
+    function getEmptyOverlay(windowIndex) {
+      if (!emptyOverlays[windowIndex]) {
+        var overlay = document.createElement('div')
+        overlay.className = 'empty-overlay hidden'
+        overlay.id = 'empty-overlay-' + windowIndex
+        overlay.textContent = 'Kamera yo\'q'
+        playWind.appendChild(overlay)
+        emptyOverlays[windowIndex] = overlay
+      }
+      return emptyOverlays[windowIndex]
+    }
+
+    // Show empty window indicator
+    function showEmpty(windowIndex) {
+      var overlay = getEmptyOverlay(windowIndex)
+      overlay.classList.remove('hidden')
+      // Hide other overlays when showing empty
+      hideOffline(windowIndex)
+      hideLoading(windowIndex)
+      updateOverlayPosition(windowIndex, overlay)
+    }
+
+    // Hide empty window indicator
+    function hideEmpty(windowIndex) {
+      var overlay = emptyOverlays[windowIndex]
+      if (overlay) {
+        overlay.classList.add('hidden')
+      }
     }
 
     function initPlugin() {
@@ -555,6 +675,7 @@
           console.log(iWndIndex)
           // Camera is online when first frame is received
           hideOffline(iWndIndex)
+          hideLoading(iWndIndex)
           var channelNumber = document.getElementById("channelNumber").value
           if (shouldCapture && channelNumber?.length === 1) {
             CapturePicture('JPEG')
@@ -604,6 +725,7 @@
         })
       }
       realplayFinished = false
+      showLoading(iWind)  // Show loading when starting playback
       oPlugin.JS_Play(url, {
         playURL: url,
         ezuikit: true,
@@ -615,7 +737,7 @@
       }, iWind).then(function () {
         realplayFinished = true
         console.log("realplay success")
-        // Don't hide offline here - wait for firstFrameCallBack to confirm
+        // Don't hide loading here - wait for firstFrameCallBack to confirm
       }, function () {
         realplayFinished = true
         console.log("realplay failed")
@@ -1062,16 +1184,33 @@
       let n = Math.ceil(Math.sqrt(num))
       let totalWindows = n * n
       let videoResolution = document.getElementById("videoResolution").value
-      // Initialize offline status for all windows
-      for (let w = 0; w < totalWindows && w < num; w++) {
-        showOffline(w) // Show offline initially, will hide when first frame arrives
+
+      // Clear previous mappings
+      windowCameraMap = {}
+
+      // Initialize overlays for all windows
+      for (let w = 0; w < totalWindows; w++) {
+        if (w < num) {
+          // Window has a camera - show loading initially
+          windowCameraMap[w] = w
+          showLoading(w)
+          hideEmpty(w)
+        } else {
+          // Window has no camera - show empty indicator
+          hideLoading(w)
+          hideOffline(w)
+          showEmpty(w)
+        }
       }
+
       oPlugin.JS_ArrangeWindow(n, false).then(() => {
         console.log(`Arranged ${n}x${n} = ${totalWindows} windows for ${num} cameras`)
         // Update overlay positions after arranging
         setTimeout(updateAllOverlayPositions, 200)
-        cameras.forEach((cam, w) => {
+        cameras.forEach((cam, camIndex) => {
+          let w = camIndex  // Window index matches camera index
           if (w >= totalWindows) return
+
           if (cam.secretKey) {
             oPlugin.JS_SetSecretKey(w, cam.secretKey).then(() => {
               console.log(`Set secret key for window ${w}`)
