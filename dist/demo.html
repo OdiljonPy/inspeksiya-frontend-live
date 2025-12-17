@@ -92,942 +92,1080 @@
       border: 1px solid #ccc;
       border-radius: 4px;
     }
+
+    #playWind {
+      position: relative;
+    }
+
+    .offline-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ff4444;
+      font-size: 24px;
+      font-weight: bold;
+      z-index: 1000;
+      pointer-events: none;
+      border-radius: 8px;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    }
+
+    .offline-overlay.hidden {
+      display: none;
+    }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 </head>
 
 <body class="flex flex-col items-center">
-<div class="w-full space-y-4">
-  <div id="playWind" class="w-full bg-black rounded-lg overflow-hidden aspect-video"></div>
-  <div class="items">
-    <button type="button" onClick="autoArrangeAndPlay()">Barcha jonli ko'rinishlarni boshlash</button>
-    <button type="button" onClick="StopRealPlayAll()">Barcha jonli ko'rinishlarni to'xtatish</button>
-  </div>
-  <div class="items hidden">
-    <h5>Zaruriy parametrlar</h5>
-    <div>
-      Kirish tokeni:<input style="width: 200px;" id="accessToken" type="text" value="" />
-      Maxfiy kalit:<input style="width: 80px;" id="secretKey" type="text" value="" />
-      Seriya raqami:<input style="width: 80px;" id="serialNumber" type="text" value="" />
-      Kanal raqami:<input style="width: 30px;" id="channelNumber" type="text" value="" />
-      Domen:<input style="width: 180px;" id="domainValue" type="text" value="" />
+  <div class="w-full space-y-4">
+    <div id="playWind" class="w-full bg-black rounded-lg overflow-hidden aspect-video"></div>
+    <div class="items">
+      <button type="button" onClick="autoArrangeAndPlay()">Barcha jonli ko'rinishlarni boshlash</button>
+      <button type="button" onClick="StopRealPlayAll()">Barcha jonli ko'rinishlarni to'xtatish</button>
     </div>
-  </div>
-  <div class="items">
-    <div class="hidden">
-      <h5>Live View</h5>
-      Resolution:
-      <select name="" id="videoResolution">
-        <option value="">standard definition</option>
-        <option value="hd">high definition</option>
-      </select>
+    <div class="items hidden">
+      <h5>Zaruriy parametrlar</h5>
+      <div>
+        Kirish tokeni:<input style="width: 200px;" id="accessToken" type="text" value="" />
+        Maxfiy kalit:<input style="width: 80px;" id="secretKey" type="text" value="" />
+        Seriya raqami:<input style="width: 80px;" id="serialNumber" type="text" value="" />
+        Kanal raqami:<input style="width: 30px;" id="channelNumber" type="text" value="" />
+        Domen:<input style="width: 180px;" id="domainValue" type="text" value="" />
+      </div>
     </div>
-    <button type="button" onClick="realplay()">Jonli ko'rinishni boshlash</button>
-    <button type="button" onClick="stop()">Jonli ko'rinishni to'xtatish</button>
-    <button type="button" onClick="GetOSDTime()">OSD vaqtini olish</button>
-    <button type="button" onclick="record()">Yozuvni boshlash</button>
-    <button type="button" onclick="stopRecord()">Yozuvni to'xtatish</button>
-    <button type="button" onClick="CapturePicture('BMP')">Suratga olish (BMP)</button>
-    <button type="button" onClick="CapturePicture('JPEG')">Suratga olish (JPEG)</button>
-    <br />
-    <button type="button" onClick="StopRealPlayAll()">Hammasini to'xtatish</button>
-    <button type="button" onClick="selectWnd()">Oynani tanlash</button>
+    <div class="items">
+      <div class="hidden">
+        <h5>Live View</h5>
+        Resolution:
+        <select name="" id="videoResolution">
+          <option value="">standard definition</option>
+          <option value="hd">high definition</option>
+        </select>
+      </div>
+      <button type="button" onClick="realplay()">Jonli ko'rinishni boshlash</button>
+      <button type="button" onClick="stop()">Jonli ko'rinishni to'xtatish</button>
+      <button type="button" onClick="GetOSDTime()">OSD vaqtini olish</button>
+      <button type="button" onclick="record()">Yozuvni boshlash</button>
+      <button type="button" onclick="stopRecord()">Yozuvni to'xtatish</button>
+      <button type="button" onClick="CapturePicture('BMP')">Suratga olish (BMP)</button>
+      <button type="button" onClick="CapturePicture('JPEG')">Suratga olish (JPEG)</button>
+      <br />
+      <button type="button" onClick="StopRealPlayAll()">Hammasini to'xtatish</button>
+      <button type="button" onClick="selectWnd()">Oynani tanlash</button>
+    </div>
+    <!--  <div class="items">-->
+    <!--    <div>talk-->
+    <!--      <button type="button" onClick="startEZUITalk()">start talk</button>-->
+    <!--      <button type="button" onClick="stopEZUITalk()">stop talk</button>-->
+    <!--    </div>-->
+    <!--  </div>-->
+    <!--  <div class="items">-->
+    <!--    <h5>Playback View</h5>-->
+    <!--    <div>-->
+    <!--      Storage Type-->
+    <!--      <select name="" id="storageType">-->
+    <!--        <option value="local">local</option>-->
+    <!--        <option value="cloud">cloud</option>-->
+    <!--      </select>-->
+    <!--      Start Time <input type="text" id="sDate" value="2024-07-25T16:27:00Z" /> - -->
+    <!--      End Time <input type="text" id="eDate" value="2024-07-25T16:30:00Z" />-->
+    <!--    </div>-->
+    <!--    <button type="button" onClick="playback()">Start Playback</button>-->
+    <!--    <button type="button" onClick="Pause()">Pause</button>-->
+    <!--    <button type="button" onClick="Resume()">Resume</button>-->
+    <!--    <button type="button" onClick="stop()">Stop Playback</button>-->
+    <!--    <button type="button" onClick="Fast()">Fast</button>-->
+    <!--    <button type="button" onClick="Slow()">Slow</button>-->
+    <!--    <button type="button" onclick="record()">Start Recording</button>-->
+    <!--    <button type="button" onclick="stopRecord()">Stop Recording</button>-->
+    <!--    <br />-->
+    <!--    <h5>File stream download</h5>-->
+    <!--    <button type="button" onclick="downloadFile()">Start File Download</button>-->
+    <!--    <button type="button" onclick="stopDownloadFile()">Stop File Download</button>-->
+    <!--  </div>-->
+    <!--  <div class="items">-->
+    <!--    <h5>Transfor To Mp4</h5>-->
+    <!--    <div>url:<input style="width: 300px;" id="beforeTransforVideoUrl" type="text" value="./down.ps" />-->
+    <!--    </div>-->
+    <!--    <button type="button" onclick="startVideoToMp4()">Transfor</button>-->
+    <!--  </div>-->
+    <!--  <div class="items">-->
+    <!--    <h5>TimeBar</h5>-->
+    <!--    <button type="button" onclick="createTimeBar()">create TimeBar</button>-->
+    <!--     <button type="button" onclick="addFileAndRepaint()">Repaint TimeBar</button> -->
+    <!--    <button type="button" onclick="expand()">expand</button>-->
+    <!--    <button type="button" onclick="narrow()">narrow</button>-->
+    <!--  </div>-->
+    <div class="items">
+      <h5>Yaqinlashtirish</h5>
+      <button type="button" onClick="EnableZoom()">Raqamli zoomni yoqish</button>
+      <button type="button" onClick="DisableZoom()">Raqamli zoomni o'chirish</button>
+    </div>
+    <div class="items">
+      <h5>Ovoz</h5>
+      <button type="button" onClick="OpenSound()">Ovozni yoqish</button>
+      <button type="button" onClick="GetVolume()">Ovoz balandligini olish</button>
+      Ovoz balandligi:<input type="range" min="0" max="100" id="volume" step="1" value="50" onchange=SetVolume() />
+      <button type="button" onClick="CloseSound()">Ovozni o'chirish</button>
+    </div>
+    <div class="items">
+      <h5>Oyna bo'linishi</h5>
+      <!--    <button type="button" onClick="arrangeWindow(1)">1x1</button>-->
+      <!--    <button type="button" onClick="arrangeWindow(2)">2x2</button>-->
+      <!--    <button type="button" onClick="arrangeWindow(3)">3x3</button>-->
+      <!--    <button type="button" onClick="arrangeWindow(4)">4x4</button>-->
+      <button type="button" onClick="fullScreenSingle()">To'liq ekran</button>
+      <!--    <button type="button" onClick="fullSreen()">Full Screen (All Windows)</button>-->
+    </div>
+    <!--  <div class="items">-->
+    <!--    <h5>Other</h5>-->
+    <!--    <button onClick="Destroy()">Destroy</button>-->
+    <!--  </div>-->
+    <!--  <div class="items">-->
+    <!--    <div>Prompt</div>-->
+    <!--    <div id="error" style="color:red"></div>-->
+    <!--  </div>-->
   </div>
-  <!--  <div class="items">-->
-  <!--    <div>talk-->
-  <!--      <button type="button" onClick="startEZUITalk()">start talk</button>-->
-  <!--      <button type="button" onClick="stopEZUITalk()">stop talk</button>-->
-  <!--    </div>-->
-  <!--  </div>-->
-  <!--  <div class="items">-->
-  <!--    <h5>Playback View</h5>-->
-  <!--    <div>-->
-  <!--      Storage Type-->
-  <!--      <select name="" id="storageType">-->
-  <!--        <option value="local">local</option>-->
-  <!--        <option value="cloud">cloud</option>-->
-  <!--      </select>-->
-  <!--      Start Time <input type="text" id="sDate" value="2024-07-25T16:27:00Z" /> - -->
-  <!--      End Time <input type="text" id="eDate" value="2024-07-25T16:30:00Z" />-->
-  <!--    </div>-->
-  <!--    <button type="button" onClick="playback()">Start Playback</button>-->
-  <!--    <button type="button" onClick="Pause()">Pause</button>-->
-  <!--    <button type="button" onClick="Resume()">Resume</button>-->
-  <!--    <button type="button" onClick="stop()">Stop Playback</button>-->
-  <!--    <button type="button" onClick="Fast()">Fast</button>-->
-  <!--    <button type="button" onClick="Slow()">Slow</button>-->
-  <!--    <button type="button" onclick="record()">Start Recording</button>-->
-  <!--    <button type="button" onclick="stopRecord()">Stop Recording</button>-->
-  <!--    <br />-->
-  <!--    <h5>File stream download</h5>-->
-  <!--    <button type="button" onclick="downloadFile()">Start File Download</button>-->
-  <!--    <button type="button" onclick="stopDownloadFile()">Stop File Download</button>-->
-  <!--  </div>-->
-  <!--  <div class="items">-->
-  <!--    <h5>Transfor To Mp4</h5>-->
-  <!--    <div>url:<input style="width: 300px;" id="beforeTransforVideoUrl" type="text" value="./down.ps" />-->
-  <!--    </div>-->
-  <!--    <button type="button" onclick="startVideoToMp4()">Transfor</button>-->
-  <!--  </div>-->
-  <!--  <div class="items">-->
-  <!--    <h5>TimeBar</h5>-->
-  <!--    <button type="button" onclick="createTimeBar()">create TimeBar</button>-->
-  <!--     <button type="button" onclick="addFileAndRepaint()">Repaint TimeBar</button> -->
-  <!--    <button type="button" onclick="expand()">expand</button>-->
-  <!--    <button type="button" onclick="narrow()">narrow</button>-->
-  <!--  </div>-->
-  <div class="items">
-    <h5>Yaqinlashtirish</h5>
-    <button type="button" onClick="EnableZoom()">Raqamli zoomni yoqish</button>
-    <button type="button" onClick="DisableZoom()">Raqamli zoomni o'chirish</button>
   </div>
-  <div class="items">
-    <h5>Ovoz</h5>
-    <button type="button" onClick="OpenSound()">Ovozni yoqish</button>
-    <button type="button" onClick="GetVolume()">Ovoz balandligini olish</button>
-    Ovoz balandligi:<input type="range" min="0" max="100" id="volume" step="1" value="50" onchange=SetVolume() />
-    <button type="button" onClick="CloseSound()">Ovozni o'chirish</button>
-  </div>
-  <div class="items">
-    <h5>Oyna bo'linishi</h5>
-    <!--    <button type="button" onClick="arrangeWindow(1)">1x1</button>-->
-    <!--    <button type="button" onClick="arrangeWindow(2)">2x2</button>-->
-    <!--    <button type="button" onClick="arrangeWindow(3)">3x3</button>-->
-    <!--    <button type="button" onClick="arrangeWindow(4)">4x4</button>-->
-    <button type="button" onClick="fullScreenSingle()">To'liq ekran</button>
-    <!--    <button type="button" onClick="fullSreen()">Full Screen (All Windows)</button>-->
-  </div>
-  <!--  <div class="items">-->
-  <!--    <h5>Other</h5>-->
-  <!--    <button onClick="Destroy()">Destroy</button>-->
-  <!--  </div>-->
-  <!--  <div class="items">-->
-  <!--    <div>Prompt</div>-->
-  <!--    <div id="error" style="color:red"></div>-->
-  <!--  </div>-->
-</div>
-</div>
-<script src="/dist/jsPlugin-3.0.0.min.js"></script>
-<script src="/dist/timeBar.js"></script>
-<script>
-  //初始化插件
-  var playWind = document.getElementById("playWind");
-  var oPlugin = new JSPlugin({
-    szId: "playWind",
-    iWidth: playWind.offsetWidth,
-    iHeight: playWind.offsetHeight,
-    iMaxSplit: 32,
-    iCurrentSplit: 1,
-    szBasePath: "./dist",
-    oStyle: {
-      border: "#343434",
-      borderSelect: "red",
-      background: "#4C4B4B"
-    }
-  })
-  var cameras = [];  // Global array for cameras
-  let shouldCapture = false;  // Flag for capture=true param
-  initPlugin()
-
-  var iWind = 0          //窗口索引
-  var oTimeBar = null    //时间条对象
-  var interval = null    //回放过程中，更新时间条osd时间的定时器
-  //fileListMap 根据实际的录像情况填写，索引代表的是窗口号
-  var fileListMap = {}
-  var playBackInfoMap = {}
-  // var midLineDate = new Date();
-
-  function stopIntervalGetTime() {
-    if (interval) {
-      clearInterval(interval)
-      interval = null
-    }
-  }
-
-  function _getOSDTime(time) {
-    let szDate = time.year + "-" + time.month + "-" + time.day + " " + time.hour + ":" + time.minute + ":" + time.second
-    return new Date(szDate).getTime() + time.milliSecond
-  }
-
-  function startIntervalGetTime() {
-    if (!oTimeBar) {
-      return
-    }
-    if (interval) {
-      clearInterval(interval)
-      interval = null
-    }
-    interval = setInterval(() => {
-      //获取播放时间,第二个参数传 true 代表获取的是完整的时间戳 standard代表获取osd时间
-      oPlugin.JS_GetOSDTime(iWind, "standard").then((osd) => {
-        if (osd) {
-          var time = _getOSDTime(osd)
-          if (!time) {
-            return
-          }
-          var timeZoneOffset = new Date().getTimezoneOffset() / -60
-          time += timeZoneOffset * 60 * 60 * 1000 //后端设备是零时区的时间，当前时区需要加上时区偏移
-          var OSDTime = new Date(time).toISOString().slice(0, 19).replace('T', ' ')
-          oTimeBar.setMidLineTime(OSDTime)
-          // console.log("setMidLineTime ", OSDTime);
-        }
-      }, (e) => {
-        console.log("getOSDTime error ", e)
-      })
-    }, 1000)
-  }
-  function seekPlayBack() {
-    //获取播放时间
-    var szCurMidTime = oTimeBar.m_tCurrentMidTime.getStringTime()
-    var szStartDate = szCurMidTime.replace(' ', 'T') + 'Z'
-    var storageType = document.getElementById("storageType").value
-    //目前萤石流媒体经测试，还是不支持seek接口，所以需要关闭后，重新开启
-    var playInfo = playBackInfoMap[iWind]
-    if (!playInfo) {
-      return
-    }
-    if ('cloud' === storageType) {
-      //云存储零时区的时间，当前时区需要加上时区偏移
-      var timeZoneOffset = new Date().getTimezoneOffset() / -60
-      var start = new Date(szStartDate).getTime() + timeZoneOffset * 60 * 60 * 1000
-      szStartDate = new Date(start).toISOString().slice(0, 19).replace(/-/g, '').replace(/:/g, '') + 'Z'
-    } else {
-      szStartDate = szStartDate.replace(/-/g, '').replace(/:/g, '')
-    }
-    var url = playInfo.url
-    url += "?begin=" + szStartDate + "&end=" + playInfo.endDate
-    if (playInfo.secretKey) {
-      oPlugin.JS_SetSecretKey(iWind, playInfo.secretKey).then(function () {
-        console.log("JS_SetSecretKey success")
-      }, function () {
-        console.log("JS_SetSecretKey failed")
-      })
-    }
-    oPlugin.JS_Play(url, {
-      playURL: url,
-      ezuikit: true,
-      env: {
-        domain: playInfo.domain
-      },
-      accessToken: playInfo.accessToken,
-      mode: "media"
-    }, iWind, szStartDate, playInfo.endDate).then(function () {
-      console.log("playback success")
-      setTimeout(() => {
-        startIntervalGetTime()
-      }, 2000)
-    }, function () {
-      console.log("playback failed")
-    })
-  }
-  function createTimeBar() {
-    var timeBar = document.getElementById("timeBar")
-    //可选参数
-    var options = {
-      backgroundColor: 'rgb(0, 0, 0)',            //时间条背景颜色
-      partLineColor: 'rgb(0,0,0)',                //分割线颜色
-      timeScaleColor: 'rgb(150, 250, 150)',       //时间条刻度颜色
-      middleLineColor: 'rgb(0, 250, 0)',          //中轴线颜色
-      middleLineTimeColor: 'rgb(0, 250, 0)'       //中轴时间颜色
-    }
-    oTimeBar = new TimeBar(timeBar, 600, 40, options)
-    oTimeBar.setMouseDownCallback(() => {
-      stopIntervalGetTime()
-    })
-    oTimeBar.setMouseUpCallback(() => {
-      seekPlayBack()
-      setTimeout(() => {
-        startIntervalGetTime()
-      }, 1000)
-    })
-  }
-
-  function repaintTimeBar(iWndIndex) {
-    if (!oTimeBar) {
-      return
-    }
-    oTimeBar.clearWndFileList()
-    //获取窗口对应通道的录像信息
-    var fileList = fileListMap[iWndIndex]
-    if (fileList) {
-      fileList.forEach((file) => {
-        oTimeBar.addFile(file.start, file.end, file.type)
-      })
-    } else {
-      console.log("fileList is null")
-    }
-    // oTimeBar.setMidLineTime(midLineDate);
-    oTimeBar.repaint()
-  }
-
-  function addFileAndRepaint() {
-    if (!oTimeBar) {
-      return
-    }
-    repaintTimeBar(iWind)
-  }
-
-  var iSpanType = 6 //6:每2小时一格 7:每小时一格 8:每半小时一格 9:每10分钟一格 10:每5分钟一格
-  //时间范围扩大
-  function expand() {
-    if (iSpanType > 6) {
-      iSpanType--
-    } else {
-      console.log("mix value is 6")
-    }
-    oTimeBar.setSpanType(iSpanType)
-  }
-  // 时间范围缩小
-  function narrow() {
-    if (iSpanType < 11) {
-      iSpanType++
-    } else {
-      console.log("max value is 12")
-    }
-    oTimeBar.setSpanType(iSpanType)
-  }
-  function clearFileListAndTimeBar() {
-    oTimeBar.clearWndFileList()
-    oTimeBar.repaint()
-  }
-
-  function initPlugin() {
-    oPlugin.JS_SetWindowControlCallback({
-      windowEventSelect: function (iWndIndex) {  //插件选中窗口回调
-        //时间条复用，所以点击窗口后，需要重新绘制一下时间条
-        if (iWind !== iWndIndex) {
-          repaintTimeBar(iWndIndex)
-        }
-        iWind = iWndIndex
-        console.log(iWndIndex)
-      },
-      secretKeyError: function (iWndIndex) {
-        console.log('secretKey Error!', iWndIndex)                    //密码错误回调
-      },
-      pluginErrorHandler: function (iWndIndex, iErrorCode, oError) {  //插件错误回调
-        console.log(iWndIndex, iErrorCode, oError)
-      },
-      windowEventOver: function (iWndIndex) {  //鼠标移过回调
-        //console.log(iWndIndex);
-      },
-      windowEventOut: function (iWndIndex) {  //鼠标移出回调
-        //console.log(iWndIndex);
-      },
-      windowEventUp: function (iWndIndex) {  //鼠标mouseup事件回调
-        //console.log(iWndIndex);
-      },
-      windowFullCcreenChange: function (bFull) {  //全屏切换回调
-        console.log("Full screen changed to " + bFull);
-        setTimeout(() => {
-          if (bFull) {
-            oPlugin.JS_Resize(screen.availWidth, screen.availHeight).then(function () {
-              console.log("JS_Resize to full screen success");
-            }, function () {
-              console.log("JS_Resize to full screen failed");
-            });
-          } else {
-            var w = playWind.offsetWidth;
-            var h = playWind.offsetHeight;
-            oPlugin.JS_Resize(w, h).then(function () {
-              console.log("JS_Resize to normal success");
-            }, function () {
-              console.log("JS_Resize to normal failed");
-            });
-          }
-        }, 100);
-      },
-      firstFrameCallBack: function (iWndIndex) {  //首帧显示回调
-        console.log(iWndIndex)
-        var channelNumber = document.getElementById("channelNumber").value
-        if (shouldCapture && channelNumber?.length === 1) {
-          CapturePicture('JPEG');
-        }
-      },
-      performanceLack: function () {  //性能不足回调
-        //
+  <script src="/dist/jsPlugin-3.0.0.min.js"></script>
+  <script src="/dist/timeBar.js"></script>
+  <script>
+    //初始化插件
+    var playWind = document.getElementById("playWind")
+    var oPlugin = new JSPlugin({
+      szId: "playWind",
+      iWidth: playWind.offsetWidth,
+      iHeight: playWind.offsetHeight,
+      iMaxSplit: 32,
+      iCurrentSplit: 1,
+      szBasePath: "./dist",
+      oStyle: {
+        border: "#343434",
+        borderSelect: "red",
+        background: "#4C4B4B"
       }
     })
-  }
+    var cameras = []  // Global array for cameras
+    let shouldCapture = false  // Flag for capture=true param
+    var offlineStatus = {}  // Track offline status for each window: { windowIndex: true/false }
+    var offlineOverlays = {}  // Store overlay elements for each window
+    initPlugin()
 
-  function Destroy() {
-    oPlugin.JS_DestroyWorker().then(function () {
-      console.log("destroyWorker success")
-    })
-  }
-  let realplayFinished = true
-  function realplay() {
-    if (cameras.length > 0) {
-      alert('Multiple cameras auto-loaded. Use "Start All Live Views" to start them or "Stop All" to stop before starting manual single view.');
-      return;
-    }
-    if (!realplayFinished) {
-      return
-    }
-    var secretKey = document.getElementById("secretKey").value
-    var accessToken = document.getElementById("accessToken").value
-    var serialNumber = document.getElementById("serialNumber").value
-    var channelNumber = document.getElementById("channelNumber").value
-    var videoResolution = document.getElementById("videoResolution").value
-    var domain = document.getElementById("domainValue").value
+    var iWind = 0          //窗口索引
+    var oTimeBar = null    //时间条对象
+    var interval = null    //回放过程中，更新时间条osd时间的定时器
+    //fileListMap 根据实际的录像情况填写，索引代表的是窗口号
+    var fileListMap = {}
+    var playBackInfoMap = {}
+    // var midLineDate = new Date();
 
-    if (serialNumber.length < 1 || channelNumber < 1 || accessToken.length < 1) {
-      return
+    function stopIntervalGetTime() {
+      if (interval) {
+        clearInterval(interval)
+        interval = null
+      }
     }
-    var url = "ezopen://open.ezviz.com/" + serialNumber + "/" + channelNumber
-    if ("hd" === videoResolution) {
-      url += ".hd.live"
-    } else {
-      url += ".live"
-    }
-    if (secretKey) {
-      oPlugin.JS_SetSecretKey(iWind, secretKey).then(function () {
-        console.log("JS_SetSecretKey success")
-      }, function () {
-        console.log("JS_SetSecretKey failed")
-      })
-    }
-    realplayFinished = false
-    oPlugin.JS_Play(url, {
-      playURL: url,
-      ezuikit: true,
-      env: {
-        domain: domain
-      },
-      accessToken: accessToken,
-      mode: "media"
-    }, iWind).then(function () {
-      realplayFinished = true
-      console.log("realplay success")
-    }, function () {
-      realplayFinished = true
-      console.log("realplay failed")
-    })
-  }
 
-  function formattedDate(timestamp) {
-    var timeZoneOffset = new Date().getTimezoneOffset() / -60  //搜索返回的是零时区的时间
-    let date = new Date(timestamp - timeZoneOffset * 60 * 60 * 1000)
-    let formatted = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')}`
-    return formatted
-  }
-
-  let playbackFinished = true
-  async function playback() {
-    if (!playbackFinished) {
-      return
+    function _getOSDTime(time) {
+      let szDate = time.year + "-" + time.month + "-" + time.day + " " + time.hour + ":" + time.minute + ":" + time.second
+      return new Date(szDate).getTime() + time.milliSecond
     }
-    var szStartDate = document.getElementById("sDate").value
-    var szEndDate = document.getElementById("eDate").value
-    var accessToken = document.getElementById("accessToken").value
-    var secretKey = document.getElementById("secretKey").value
-    var storageType = document.getElementById("storageType").value
-    var serialNumber = document.getElementById("serialNumber").value
-    var channelNumber = document.getElementById("channelNumber").value
-    var domain = document.getElementById("domainValue").value
 
-    if (serialNumber.length < 1 || channelNumber < 1 || szStartDate.length < 1 || szEndDate.length < 1 || accessToken.length < 1) {
-      return
-    }
-    let record = await oPlugin.JS_VideoSearch(
-            {
-              domain,
-              accessToken,
-              deviceSerial: serialNumber,
-              channelNo: channelNumber,
-              startTime: szStartDate,
-              endTime: szEndDate,
-              storageType: 'cloud' === storageType ? 1 : 2
+    function startIntervalGetTime() {
+      if (!oTimeBar) {
+        return
+      }
+      if (interval) {
+        clearInterval(interval)
+        interval = null
+      }
+      interval = setInterval(() => {
+        //获取播放时间,第二个参数传 true 代表获取的是完整的时间戳 standard代表获取osd时间
+        oPlugin.JS_GetOSDTime(iWind, "standard").then((osd) => {
+          if (osd) {
+            var time = _getOSDTime(osd)
+            if (!time) {
+              return
             }
-    )
-    fileListMap[iWind] = []
-    if (record) {
-      record.forEach(item => {
-        fileListMap[iWind].push({
-          start: formattedDate(item.startTime),   //'2023-12-03 12:34:56'
-          end: formattedDate(item.endTime),       //'2023-12-04 02:34:56'
-          type: 1
+            var timeZoneOffset = new Date().getTimezoneOffset() / -60
+            time += timeZoneOffset * 60 * 60 * 1000 //后端设备是零时区的时间，当前时区需要加上时区偏移
+            var OSDTime = new Date(time).toISOString().slice(0, 19).replace('T', ' ')
+            oTimeBar.setMidLineTime(OSDTime)
+            // console.log("setMidLineTime ", OSDTime);
+          }
+        }, (e) => {
+          console.log("getOSDTime error ", e)
         })
-      })
+      }, 1000)
     }
-    repaintTimeBar(iWind)
-    var url = "ezopen://open.ezviz.com/" + serialNumber + "/" + channelNumber + "." + storageType + ".rec"
-    if ('cloud' === storageType) {
-      //云存储零时区的时间，当前时区需要加上时区偏移
-      var timeZoneOffset = new Date().getTimezoneOffset() / -60
-      var start = new Date(szStartDate).getTime() + timeZoneOffset * 60 * 60 * 1000
-      var end = new Date(szEndDate).getTime() + timeZoneOffset * 60 * 60 * 1000
-      szStartDate = new Date(start).toISOString().slice(0, 19).replace(/-/g, '').replace(/:/g, '') + 'Z'
-      szEndDate = new Date(end).toISOString().slice(0, 19).replace(/-/g, '').replace(/:/g, '') + 'Z'
-    } else {
-      szStartDate = szStartDate.replace(/-/g, '').replace(/:/g, '')
-      szEndDate = szEndDate.replace(/-/g, '').replace(/:/g, '')
-    }
-    //记录一下参数，方便时间条拖动的时候，直接使用这些参数
-    playBackInfoMap[iWind] = {
-      url: url,
-      secretKey: secretKey,
-      accessToken: accessToken,
-      domain: domain,
-      startDate: szStartDate,
-      endDate: szEndDate
-    }
-    if (secretKey) {
-      oPlugin.JS_SetSecretKey(iWind, secretKey).then(function () {
-        console.log("JS_SetSecretKey success")
-      }, function () {
-        console.log("JS_SetSecretKey failed")
-      })
-    }
-    url += "?begin=" + szStartDate + "&end=" + szEndDate
-    playbackFinished = false
-    oPlugin.JS_Play(url, {
-      playURL: url,
-      ezuikit: true,
-      env: {
-        domain: domain
-      },
-      accessToken: accessToken,
-      mode: "media"
-    }, iWind, szStartDate, szEndDate).then(function () {
-      console.log("playback success")
-      playbackFinished = true
-      setTimeout(() => {
-        startIntervalGetTime()
-      }, 2000)
-    }, function () {
-      playbackFinished = true
-      console.log("playback failed")
-    })
-  }
-
-  function stop() {
-    oPlugin.JS_Stop(iWind).then(function () {
-      console.log("stop success")
-    }, function () {
-      console.log("stop failed")
-    })
-  }
-  let downloadFileUUID = null    //外部强制关闭的时候需要用到，正常情况下不需要
-  function downloadFile() {
-    var szStartDate = document.getElementById("sDate").value
-    var szEndDate = document.getElementById("eDate").value
-    var accessToken = document.getElementById("accessToken").value
-    var secretKey = document.getElementById("secretKey").value
-    var storageType = document.getElementById("storageType").value
-    var serialNumber = document.getElementById("serialNumber").value
-    var channelNumber = document.getElementById("channelNumber").value
-    var domain = document.getElementById("domainValue").value
-
-    if (serialNumber.length < 1 || channelNumber < 1 || szStartDate.length < 1 || szEndDate.length < 1 || accessToken.length < 1) {
-      return
-    }
-
-    var url = "ezopen://open.ezviz.com/" + serialNumber + "/" + channelNumber + "." + storageType + ".rec"
-    if ('cloud' === storageType) {
-      //云存储零时区的时间，当前时区需要加上时区偏移
-      var timeZoneOffset = new Date().getTimezoneOffset() / -60
-      var start = new Date(szStartDate).getTime() + timeZoneOffset * 60 * 60 * 1000
-      var end = new Date(szEndDate).getTime() + timeZoneOffset * 60 * 60 * 1000
-      szStartDate = new Date(start).toISOString().slice(0, 19).replace(/-/g, '').replace(/:/g, '') + 'Z'
-      szEndDate = new Date(end).toISOString().slice(0, 19).replace(/-/g, '').replace(/:/g, '') + 'Z'
-    } else {
-      szStartDate = szStartDate.replace(/-/g, '').replace(/:/g, '')
-      szEndDate = szEndDate.replace(/-/g, '').replace(/:/g, '')
-    }
-    url += "?begin=" + szStartDate + "&end=" + szEndDate
-    var fileName = dateFormat(new Date(), "yyyyMMddhhmmssS")
-    oPlugin.JS_DownloadFile(url, {
-      playURL: url,               //这块之所以还要传playURL是因为，兼容老逻辑，playURL有与ws url不一样的情况
-      fileName: fileName,   //要保存的文件名
-      idstType: 5,                //文件保存的目标类型 5代表 mp4 2代表ps
-      secretKey: secretKey,       //如果是加密码流，转mp4时需要传递密码
-      startTime: szStartDate,
-      endTime: szEndDate,
-      ezuikit: true,
-      env: {
-        domain: domain
-      },
-      accessToken: accessToken,
-      mode: "media"             //建立连接的url新增一个media节点, 联网共享https下需要用到该参数
-    }).then(function (szUUID) {
-      downloadFileUUID = szUUID
-      console.log("start downloadFile success")
-    }, function () {
-      console.log("start downloadFile failed")
-    })
-  }
-
-  function stopDownloadFile() {
-    oPlugin.JS_StopDownloadFile(downloadFileUUID).then(function () {
-      console.log("stop downloadFile success")
-    }, function () {
-      console.log("stop downloadFile failed")
-    })
-  }
-
-  async function videoToMp4(fileData) {
-    let bytes = new Uint8Array(fileData)
-    let bodyData = bytes
-    let inputSize = 1024 * 30
-    let timeOut = 50
-    let arrayData = bodyData
-    let totalLength = arrayData.length
-    let total = Math.ceil(totalLength / (inputSize))
-    let fileName = dateFormat(new Date(), "yyyyMMddhhmmssS")
-    let secretKey = ""
-    let szUUID = await oPlugin.JS_InitDataTransform(fileName, 5, null, secretKey)
-    let i = 0
-    let data = null
-    timer = setInterval(() => {
-      if (i + 1 >= total) {
-        i = 0
-        clearTimeout(timer)
+    function seekPlayBack() {
+      //获取播放时间
+      var szCurMidTime = oTimeBar.m_tCurrentMidTime.getStringTime()
+      var szStartDate = szCurMidTime.replace(' ', 'T') + 'Z'
+      var storageType = document.getElementById("storageType").value
+      //目前萤石流媒体经测试，还是不支持seek接口，所以需要关闭后，重新开启
+      var playInfo = playBackInfoMap[iWind]
+      if (!playInfo) {
+        return
+      }
+      if ('cloud' === storageType) {
+        //云存储零时区的时间，当前时区需要加上时区偏移
+        var timeZoneOffset = new Date().getTimezoneOffset() / -60
+        var start = new Date(szStartDate).getTime() + timeZoneOffset * 60 * 60 * 1000
+        szStartDate = new Date(start).toISOString().slice(0, 19).replace(/-/g, '').replace(/:/g, '') + 'Z'
+      } else {
+        szStartDate = szStartDate.replace(/-/g, '').replace(/:/g, '')
+      }
+      var url = playInfo.url
+      url += "?begin=" + szStartDate + "&end=" + playInfo.endDate
+      if (playInfo.secretKey) {
+        oPlugin.JS_SetSecretKey(iWind, playInfo.secretKey).then(function () {
+          console.log("JS_SetSecretKey success")
+        }, function () {
+          console.log("JS_SetSecretKey failed")
+        })
+      }
+      oPlugin.JS_Play(url, {
+        playURL: url,
+        ezuikit: true,
+        env: {
+          domain: playInfo.domain
+        },
+        accessToken: playInfo.accessToken,
+        mode: "media"
+      }, iWind, szStartDate, playInfo.endDate).then(function () {
+        console.log("playback success")
         setTimeout(() => {
-          oPlugin.JS_StopTransformData(szUUID)
-        }, 500)
-      }
-      let endPos = (i + 1) * inputSize
-      if (endPos > fileData.length) {
-        endPos = fileData.length
-      }
-      if (data) {
-        data = null
-      }
-      data = fileData.slice(i * inputSize, endPos)
-      oPlugin.JS_InputTransformData(szUUID, data)
-      i++
-    }, timeOut)
-  }
-
-  function getVideoDataAndTransformToMp4(videoFileUrl) {
-    var xhr = new XMLHttpRequest()
-    xhr.open('GET', videoFileUrl)
-    xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded')
-    xhr.responseType = 'arraybuffer'
-    xhr.onreadystatechange = handler
-    xhr.send()
-    function handler() {
-      if (xhr.readyState === 4) {
-        if (xhr.status === 200) {
-          videoToMp4(xhr.response)
-        } else {
-          console.error('no file found')
-          alert("request file failed")
-        }
-      }
-    }
-  }
-  function startVideoToMp4() {
-    var url = document.getElementById("beforeTransforVideoUrl").value
-    if (url) {
-      getVideoDataAndTransformToMp4(url)
-    }
-  }
-
-  function arrangeWindow(i) {
-    oPlugin.JS_ArrangeWindow(i, false).then(function () {
-      console.log("JS_ArrangeWindow success")
-    })
-  }
-  function Stop() {
-    oPlugin.JS_Stop(iWind).then(function () {
-      console.log("JS_Stop success")
-    }, function () {
-      console.log("JS_Stop failed")
-    })
-  }
-  function Pause() {
-    oPlugin.JS_Pause(iWind).then(function () {
-      console.log("Pause success")
-    }, function () {
-      console.log("Pause failed")
-    })
-  }
-  function Resume() {
-    oPlugin.JS_Resume(iWind).then(function () {
-      console.log("Resume success")
-    }, function () {
-      console.log("Resume failed")
-    })
-  }
-  function Slow(i) {
-    oPlugin.JS_Slow(iWind).then(function () {
-      console.log("Slow success")
-    }, function () {
-      console.log("Slow failed")
-    })
-  }
-  function Fast() {
-    oPlugin.JS_Fast(iWind).then(function () {
-      console.log("Fast success")
-    }, function () {
-      console.log("Fast failed")
-    })
-  }
-  function FrameForward() {
-    oPlugin.JS_FrameForward(iWind).then(function () {
-      console.log("FrameForward success")
-    }, function () {
-      console.log("FrameForward failed")
-    })
-  }
-  function GetOSDTime() {
-    oPlugin.JS_GetOSDTime(iWind, "standard").then(function (time) {
-      let osd = time.year + "-" + time.month + "-" + time.day + " " + time.hour + ":" + time.minute + ":" + time.second
-      document.getElementById("error").innerHTML = "<div>OSD：" + osd + "</div>"
-    })
-  }
-  function OpenSound() {
-    var iRet = oPlugin.JS_OpenSound(iWind).then(function () {
-      console.log("JS_OpenSound success")
-    }, function () {
-      console.log("JS_OpenSound failed")
-    })
-  }
-  function CloseSound() {
-    oPlugin.JS_CloseSound(iWind).then(function () {
-      console.log("JS_CloseSound success")
-    }, function () {
-      console.log("JS_CloseSound failed")
-    })
-  }
-  function EnableZoom() {
-    oPlugin.JS_EnableZoom(iWind).then(function () {
-      console.log("EnableZoom success")
-    })
-  }
-  function DisableZoom() {
-    oPlugin.JS_DisableZoom(iWind).then(function () {
-      console.log("DisableZoom success")
-    })
-  }
-
-  function SetVolume() {
-    var iVolume = parseInt(document.getElementById("volume").value)
-    oPlugin.JS_SetVolume(iWind, iVolume).then(function () {
-      console.log("JS_SetVolume success")
-    }, function () {
-      console.log("JS_SetVolume failed")
-    })
-  }
-  function selectWnd() {
-    oPlugin.JS_SelectWnd(3).then(function () {
-      console.log("JS_SelectWnd success")
-    }, function () {
-      console.log("JS_SelectWnd failed")
-    })
-  }
-  function GetVolume() {
-    oPlugin.JS_GetVolume(iWind).then(function (i) {
-      console.log(i)
-      document.getElementById("error").innerHTML = "<div>Volume:" + i + "</div>"
-    })
-  }
-  function CapturePicture(szType) {
-    oPlugin.JS_CapturePicture(iWind, "img", szType).then(function () {
-      console.log("CapturePicture success")
-    }, function () {
-      console.log("CapturePicture failed")
-    })
-  }
-  function StopRealPlayAll() {
-    oPlugin.JS_StopRealPlayAll().then(function () {
-      console.log("JS_StopRealPlayAll success")
-    }, function () {
-      console.log("JS_StopRealPlayAll failed")
-    })
-  }
-  function dateFormat(oDate, fmt) {
-    var o = {
-      "M+": oDate.getMonth() + 1, //月份
-      "d+": oDate.getDate(), //日
-      "h+": oDate.getHours(), //小时
-      "m+": oDate.getMinutes(), //分
-      "s+": oDate.getSeconds(), //秒
-      "q+": Math.floor((oDate.getMonth() + 3) / 3), //季度
-      "S": oDate.getMilliseconds()//毫秒
-    }
-    if (/(y+)/.test(fmt)) {
-      fmt = fmt.replace(RegExp.$1, (oDate.getFullYear() + "").substr(4 - RegExp.$1.length))
-    }
-    for (var k in o) {
-      if (new RegExp("(" + k + ")").test(fmt)) {
-        fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)))
-      }
-    }
-    return fmt
-  }
-  function record() {
-    var szTime = dateFormat(new Date(), "yyyyMMddhhmmssS")
-    var targetType = 2  //PS 2 TS 3 RTP 4 MPEG4 5
-    var secretKey = document.getElementById("secretKey").value
-    oPlugin.JS_StartSaveEx(iWind, "video_" + szTime + ".mp4", targetType, {
-      secretKey: secretKey
-    }).then(function () {
-      console.log("record success")
-    }, function () {
-      console.log("record failed")
-    });;
-  }
-  function stopRecord() {
-    oPlugin.JS_StopSave(iWind).then(function () {
-      console.log("stopRecord success")
-    }, function () {
-      console.log("stopRecord failed")
-    });
-  }
-  function fullSreen() {
-    oPlugin.JS_FullScreenDisplay(true).then(function () {
-      console.log("JS_FullScreenDisplay success")
-    }, function () {
-      console.log("JS_FullScreenDisplay failed")
-    })
-  }
-  function fullScreenSingle() {
-    oPlugin.JS_FullScreenSingle(iWind).then(function () {
-      console.log("JS_FullScreenSingle success")
-    }, function () {
-      console.log("JS_FullScreenSingle failed")
-    })
-  }
-
-  window.onresize = function () {
-    if (playWind) {
-      var w = playWind.offsetWidth;
-      var h = playWind.offsetHeight;
-      oPlugin.JS_Resize(w, h).then(function () {
-        console.log("JS_Resize success to " + w + "x" + h);
+          startIntervalGetTime()
+        }, 2000)
       }, function () {
-        console.log("JS_Resize failed");
-      });
+        console.log("playback failed")
+      })
     }
-  }
-
-  function startEZUITalk() {
-    var accessToken = document.getElementById("accessToken").value
-    var serialNumber = document.getElementById("serialNumber").value
-    var channelNumber = document.getElementById("channelNumber").value
-    var domain = document.getElementById("domainValue").value
-
-    let oParams = {
-      accessToken: accessToken,
-      channelNo: channelNumber,
-      deviceSerial: serialNumber,
-      env: {
-        domain: domain
-      },
+    function createTimeBar() {
+      var timeBar = document.getElementById("timeBar")
+      //可选参数
+      var options = {
+        backgroundColor: 'rgb(0, 0, 0)',            //时间条背景颜色
+        partLineColor: 'rgb(0,0,0)',                //分割线颜色
+        timeScaleColor: 'rgb(150, 250, 150)',       //时间条刻度颜色
+        middleLineColor: 'rgb(0, 250, 0)',          //中轴线颜色
+        middleLineTimeColor: 'rgb(0, 250, 0)'       //中轴时间颜色
+      }
+      oTimeBar = new TimeBar(timeBar, 600, 40, options)
+      oTimeBar.setMouseDownCallback(() => {
+        stopIntervalGetTime()
+      })
+      oTimeBar.setMouseUpCallback(() => {
+        seekPlayBack()
+        setTimeout(() => {
+          startIntervalGetTime()
+        }, 1000)
+      })
     }
-    oPlugin.JS_StartEZUITalk(oParams, (info) => {
-      console.log("callback info ", info)
-    }).then(function () {
-      console.log("startTalk success")
-    }, function () {
-      console.log("startTalk failed")
-    })
-  }
 
-  function stopEZUITalk() {
-    oPlugin.JS_StopEZUITalk().then(function () {
-      console.log("stopTalk success")
-    }, function () {
-      console.log("stopTalk failed")
-    })
-  }
+    function repaintTimeBar(iWndIndex) {
+      if (!oTimeBar) {
+        return
+      }
+      oTimeBar.clearWndFileList()
+      //获取窗口对应通道的录像信息
+      var fileList = fileListMap[iWndIndex]
+      if (fileList) {
+        fileList.forEach((file) => {
+          oTimeBar.addFile(file.start, file.end, file.type)
+        })
+      } else {
+        console.log("fileList is null")
+      }
+      // oTimeBar.setMidLineTime(midLineDate);
+      oTimeBar.repaint()
+    }
 
-  // Auto-arrange and play multiple cameras
-  function autoArrangeAndPlay() {
-    let num = cameras.length;
-    if (num === 0) return;
-    let n = Math.ceil(Math.sqrt(num));
-    let totalWindows = n * n;
-    let videoResolution = document.getElementById("videoResolution").value;
-    oPlugin.JS_ArrangeWindow(n, false).then(() => {
-      console.log(`Arranged ${n}x${n} = ${totalWindows} windows for ${num} cameras`);
-      cameras.forEach((cam, w) => {
-        if (w >= totalWindows) return;
-        if (cam.secretKey) {
-          oPlugin.JS_SetSecretKey(w, cam.secretKey).then(() => {
-            console.log(`Set secret key for window ${w}`);
+    function addFileAndRepaint() {
+      if (!oTimeBar) {
+        return
+      }
+      repaintTimeBar(iWind)
+    }
+
+    var iSpanType = 6 //6:每2小时一格 7:每小时一格 8:每半小时一格 9:每10分钟一格 10:每5分钟一格
+    //时间范围扩大
+    function expand() {
+      if (iSpanType > 6) {
+        iSpanType--
+      } else {
+        console.log("mix value is 6")
+      }
+      oTimeBar.setSpanType(iSpanType)
+    }
+    // 时间范围缩小
+    function narrow() {
+      if (iSpanType < 11) {
+        iSpanType++
+      } else {
+        console.log("max value is 12")
+      }
+      oTimeBar.setSpanType(iSpanType)
+    }
+    function clearFileListAndTimeBar() {
+      oTimeBar.clearWndFileList()
+      oTimeBar.repaint()
+    }
+
+    // Create or get offline overlay for a window
+    function getOfflineOverlay(windowIndex) {
+      if (!offlineOverlays[windowIndex]) {
+        var overlay = document.createElement('div')
+        overlay.className = 'offline-overlay hidden'
+        overlay.id = 'offline-overlay-' + windowIndex
+        overlay.textContent = 'OFFLINE'
+        playWind.appendChild(overlay)
+        offlineOverlays[windowIndex] = overlay
+      }
+      return offlineOverlays[windowIndex]
+    }
+
+    // Show offline status for a window
+    function showOffline(windowIndex) {
+      offlineStatus[windowIndex] = true
+      var overlay = getOfflineOverlay(windowIndex)
+      overlay.classList.remove('hidden')
+      // Position overlay over the specific window
+      updateOverlayPosition(windowIndex)
+    }
+
+    // Hide offline status for a window
+    function hideOffline(windowIndex) {
+      offlineStatus[windowIndex] = false
+      var overlay = offlineOverlays[windowIndex]
+      if (overlay) {
+        overlay.classList.add('hidden')
+      }
+    }
+
+    // Update overlay position based on window grid layout
+    function updateOverlayPosition(windowIndex) {
+      var overlay = offlineOverlays[windowIndex]
+      if (!overlay) return
+
+      // Get current window arrangement
+      var num = cameras.length
+      if (num === 0) {
+        // Single window mode
+        overlay.style.top = '0'
+        overlay.style.left = '0'
+        overlay.style.width = '100%'
+        overlay.style.height = '100%'
+        return
+      }
+
+      // Calculate grid layout
+      var n = Math.ceil(Math.sqrt(num))
+      var totalWindows = n * n
+
+      if (windowIndex >= totalWindows) {
+        overlay.style.display = 'none'
+        return
+      }
+
+      // Calculate position in grid (row, col)
+      var row = Math.floor(windowIndex / n)
+      var col = windowIndex % n
+
+      // Position overlay to cover the specific window
+      var containerWidth = playWind.offsetWidth
+      var containerHeight = playWind.offsetHeight
+      var windowWidth = containerWidth / n
+      var windowHeight = containerHeight / n
+
+      overlay.style.top = (row * windowHeight) + 'px'
+      overlay.style.left = (col * windowWidth) + 'px'
+      overlay.style.width = windowWidth + 'px'
+      overlay.style.height = windowHeight + 'px'
+      overlay.style.borderRadius = '0' // Remove border radius for grid windows
+      // Adjust font size based on window size
+      var fontSize = Math.min(windowWidth / 8, windowHeight / 6, 24)
+      overlay.style.fontSize = Math.max(12, fontSize) + 'px'
+    }
+
+    // Update all overlay positions (call on window resize or layout change)
+    function updateAllOverlayPositions() {
+      Object.keys(offlineOverlays).forEach(function (windowIndex) {
+        updateOverlayPosition(parseInt(windowIndex))
+      })
+    }
+
+    function initPlugin() {
+      oPlugin.JS_SetWindowControlCallback({
+        windowEventSelect: function (iWndIndex) {  //插件选中窗口回调
+          //时间条复用，所以点击窗口后，需要重新绘制一下时间条
+          if (iWind !== iWndIndex) {
+            repaintTimeBar(iWndIndex)
+          }
+          iWind = iWndIndex
+          console.log(iWndIndex)
+        },
+        secretKeyError: function (iWndIndex) {
+          console.log('secretKey Error!', iWndIndex)                    //密码错误回调
+          showOffline(iWndIndex)
+        },
+        pluginErrorHandler: function (iWndIndex, iErrorCode, oError) {  //插件错误回调
+          console.log(iWndIndex, iErrorCode, oError)
+          // Mark as offline on error
+          showOffline(iWndIndex)
+        },
+        windowEventOver: function (iWndIndex) {  //鼠标移过回调
+          //console.log(iWndIndex);
+        },
+        windowEventOut: function (iWndIndex) {  //鼠标移出回调
+          //console.log(iWndIndex);
+        },
+        windowEventUp: function (iWndIndex) {  //鼠标mouseup事件回调
+          //console.log(iWndIndex);
+        },
+        windowFullCcreenChange: function (bFull) {  //全屏切换回调
+          console.log("Full screen changed to " + bFull)
+          setTimeout(() => {
+            if (bFull) {
+              oPlugin.JS_Resize(screen.availWidth, screen.availHeight).then(function () {
+                console.log("JS_Resize to full screen success")
+              }, function () {
+                console.log("JS_Resize to full screen failed")
+              })
+            } else {
+              var w = playWind.offsetWidth
+              var h = playWind.offsetHeight
+              oPlugin.JS_Resize(w, h).then(function () {
+                console.log("JS_Resize to normal success")
+              }, function () {
+                console.log("JS_Resize to normal failed")
+              })
+            }
+          }, 100)
+        },
+        firstFrameCallBack: function (iWndIndex) {  //首帧显示回调
+          console.log(iWndIndex)
+          // Camera is online when first frame is received
+          hideOffline(iWndIndex)
+          var channelNumber = document.getElementById("channelNumber").value
+          if (shouldCapture && channelNumber?.length === 1) {
+            CapturePicture('JPEG')
+          }
+        },
+        performanceLack: function () {  //性能不足回调
+          //
+        }
+      })
+    }
+
+    function Destroy() {
+      oPlugin.JS_DestroyWorker().then(function () {
+        console.log("destroyWorker success")
+      })
+    }
+    let realplayFinished = true
+    function realplay() {
+      if (cameras.length > 0) {
+        alert('Multiple cameras auto-loaded. Use "Start All Live Views" to start them or "Stop All" to stop before starting manual single view.')
+        return
+      }
+      if (!realplayFinished) {
+        return
+      }
+      var secretKey = document.getElementById("secretKey").value
+      var accessToken = document.getElementById("accessToken").value
+      var serialNumber = document.getElementById("serialNumber").value
+      var channelNumber = document.getElementById("channelNumber").value
+      var videoResolution = document.getElementById("videoResolution").value
+      var domain = document.getElementById("domainValue").value
+
+      if (serialNumber.length < 1 || channelNumber < 1 || accessToken.length < 1) {
+        return
+      }
+      var url = "ezopen://open.ezviz.com/" + serialNumber + "/" + channelNumber
+      if ("hd" === videoResolution) {
+        url += ".hd.live"
+      } else {
+        url += ".live"
+      }
+      if (secretKey) {
+        oPlugin.JS_SetSecretKey(iWind, secretKey).then(function () {
+          console.log("JS_SetSecretKey success")
+        }, function () {
+          console.log("JS_SetSecretKey failed")
+        })
+      }
+      realplayFinished = false
+      oPlugin.JS_Play(url, {
+        playURL: url,
+        ezuikit: true,
+        env: {
+          domain: domain
+        },
+        accessToken: accessToken,
+        mode: "media"
+      }, iWind).then(function () {
+        realplayFinished = true
+        console.log("realplay success")
+        // Don't hide offline here - wait for firstFrameCallBack to confirm
+      }, function () {
+        realplayFinished = true
+        console.log("realplay failed")
+        showOffline(iWind)
+      })
+    }
+
+    function formattedDate(timestamp) {
+      var timeZoneOffset = new Date().getTimezoneOffset() / -60  //搜索返回的是零时区的时间
+      let date = new Date(timestamp - timeZoneOffset * 60 * 60 * 1000)
+      let formatted = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')}`
+      return formatted
+    }
+
+    let playbackFinished = true
+    async function playback() {
+      if (!playbackFinished) {
+        return
+      }
+      var szStartDate = document.getElementById("sDate").value
+      var szEndDate = document.getElementById("eDate").value
+      var accessToken = document.getElementById("accessToken").value
+      var secretKey = document.getElementById("secretKey").value
+      var storageType = document.getElementById("storageType").value
+      var serialNumber = document.getElementById("serialNumber").value
+      var channelNumber = document.getElementById("channelNumber").value
+      var domain = document.getElementById("domainValue").value
+
+      if (serialNumber.length < 1 || channelNumber < 1 || szStartDate.length < 1 || szEndDate.length < 1 || accessToken.length < 1) {
+        return
+      }
+      let record = await oPlugin.JS_VideoSearch(
+        {
+          domain,
+          accessToken,
+          deviceSerial: serialNumber,
+          channelNo: channelNumber,
+          startTime: szStartDate,
+          endTime: szEndDate,
+          storageType: 'cloud' === storageType ? 1 : 2
+        }
+      )
+      fileListMap[iWind] = []
+      if (record) {
+        record.forEach(item => {
+          fileListMap[iWind].push({
+            start: formattedDate(item.startTime),   //'2023-12-03 12:34:56'
+            end: formattedDate(item.endTime),       //'2023-12-04 02:34:56'
+            type: 1
+          })
+        })
+      }
+      repaintTimeBar(iWind)
+      var url = "ezopen://open.ezviz.com/" + serialNumber + "/" + channelNumber + "." + storageType + ".rec"
+      if ('cloud' === storageType) {
+        //云存储零时区的时间，当前时区需要加上时区偏移
+        var timeZoneOffset = new Date().getTimezoneOffset() / -60
+        var start = new Date(szStartDate).getTime() + timeZoneOffset * 60 * 60 * 1000
+        var end = new Date(szEndDate).getTime() + timeZoneOffset * 60 * 60 * 1000
+        szStartDate = new Date(start).toISOString().slice(0, 19).replace(/-/g, '').replace(/:/g, '') + 'Z'
+        szEndDate = new Date(end).toISOString().slice(0, 19).replace(/-/g, '').replace(/:/g, '') + 'Z'
+      } else {
+        szStartDate = szStartDate.replace(/-/g, '').replace(/:/g, '')
+        szEndDate = szEndDate.replace(/-/g, '').replace(/:/g, '')
+      }
+      //记录一下参数，方便时间条拖动的时候，直接使用这些参数
+      playBackInfoMap[iWind] = {
+        url: url,
+        secretKey: secretKey,
+        accessToken: accessToken,
+        domain: domain,
+        startDate: szStartDate,
+        endDate: szEndDate
+      }
+      if (secretKey) {
+        oPlugin.JS_SetSecretKey(iWind, secretKey).then(function () {
+          console.log("JS_SetSecretKey success")
+        }, function () {
+          console.log("JS_SetSecretKey failed")
+        })
+      }
+      url += "?begin=" + szStartDate + "&end=" + szEndDate
+      playbackFinished = false
+      oPlugin.JS_Play(url, {
+        playURL: url,
+        ezuikit: true,
+        env: {
+          domain: domain
+        },
+        accessToken: accessToken,
+        mode: "media"
+      }, iWind, szStartDate, szEndDate).then(function () {
+        console.log("playback success")
+        playbackFinished = true
+        setTimeout(() => {
+          startIntervalGetTime()
+        }, 2000)
+      }, function () {
+        playbackFinished = true
+        console.log("playback failed")
+      })
+    }
+
+    function stop() {
+      oPlugin.JS_Stop(iWind).then(function () {
+        console.log("stop success")
+      }, function () {
+        console.log("stop failed")
+      })
+    }
+    let downloadFileUUID = null    //外部强制关闭的时候需要用到，正常情况下不需要
+    function downloadFile() {
+      var szStartDate = document.getElementById("sDate").value
+      var szEndDate = document.getElementById("eDate").value
+      var accessToken = document.getElementById("accessToken").value
+      var secretKey = document.getElementById("secretKey").value
+      var storageType = document.getElementById("storageType").value
+      var serialNumber = document.getElementById("serialNumber").value
+      var channelNumber = document.getElementById("channelNumber").value
+      var domain = document.getElementById("domainValue").value
+
+      if (serialNumber.length < 1 || channelNumber < 1 || szStartDate.length < 1 || szEndDate.length < 1 || accessToken.length < 1) {
+        return
+      }
+
+      var url = "ezopen://open.ezviz.com/" + serialNumber + "/" + channelNumber + "." + storageType + ".rec"
+      if ('cloud' === storageType) {
+        //云存储零时区的时间，当前时区需要加上时区偏移
+        var timeZoneOffset = new Date().getTimezoneOffset() / -60
+        var start = new Date(szStartDate).getTime() + timeZoneOffset * 60 * 60 * 1000
+        var end = new Date(szEndDate).getTime() + timeZoneOffset * 60 * 60 * 1000
+        szStartDate = new Date(start).toISOString().slice(0, 19).replace(/-/g, '').replace(/:/g, '') + 'Z'
+        szEndDate = new Date(end).toISOString().slice(0, 19).replace(/-/g, '').replace(/:/g, '') + 'Z'
+      } else {
+        szStartDate = szStartDate.replace(/-/g, '').replace(/:/g, '')
+        szEndDate = szEndDate.replace(/-/g, '').replace(/:/g, '')
+      }
+      url += "?begin=" + szStartDate + "&end=" + szEndDate
+      var fileName = dateFormat(new Date(), "yyyyMMddhhmmssS")
+      oPlugin.JS_DownloadFile(url, {
+        playURL: url,               //这块之所以还要传playURL是因为，兼容老逻辑，playURL有与ws url不一样的情况
+        fileName: fileName,   //要保存的文件名
+        idstType: 5,                //文件保存的目标类型 5代表 mp4 2代表ps
+        secretKey: secretKey,       //如果是加密码流，转mp4时需要传递密码
+        startTime: szStartDate,
+        endTime: szEndDate,
+        ezuikit: true,
+        env: {
+          domain: domain
+        },
+        accessToken: accessToken,
+        mode: "media"             //建立连接的url新增一个media节点, 联网共享https下需要用到该参数
+      }).then(function (szUUID) {
+        downloadFileUUID = szUUID
+        console.log("start downloadFile success")
+      }, function () {
+        console.log("start downloadFile failed")
+      })
+    }
+
+    function stopDownloadFile() {
+      oPlugin.JS_StopDownloadFile(downloadFileUUID).then(function () {
+        console.log("stop downloadFile success")
+      }, function () {
+        console.log("stop downloadFile failed")
+      })
+    }
+
+    async function videoToMp4(fileData) {
+      let bytes = new Uint8Array(fileData)
+      let bodyData = bytes
+      let inputSize = 1024 * 30
+      let timeOut = 50
+      let arrayData = bodyData
+      let totalLength = arrayData.length
+      let total = Math.ceil(totalLength / (inputSize))
+      let fileName = dateFormat(new Date(), "yyyyMMddhhmmssS")
+      let secretKey = ""
+      let szUUID = await oPlugin.JS_InitDataTransform(fileName, 5, null, secretKey)
+      let i = 0
+      let data = null
+      timer = setInterval(() => {
+        if (i + 1 >= total) {
+          i = 0
+          clearTimeout(timer)
+          setTimeout(() => {
+            oPlugin.JS_StopTransformData(szUUID)
+          }, 500)
+        }
+        let endPos = (i + 1) * inputSize
+        if (endPos > fileData.length) {
+          endPos = fileData.length
+        }
+        if (data) {
+          data = null
+        }
+        data = fileData.slice(i * inputSize, endPos)
+        oPlugin.JS_InputTransformData(szUUID, data)
+        i++
+      }, timeOut)
+    }
+
+    function getVideoDataAndTransformToMp4(videoFileUrl) {
+      var xhr = new XMLHttpRequest()
+      xhr.open('GET', videoFileUrl)
+      xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded')
+      xhr.responseType = 'arraybuffer'
+      xhr.onreadystatechange = handler
+      xhr.send()
+      function handler() {
+        if (xhr.readyState === 4) {
+          if (xhr.status === 200) {
+            videoToMp4(xhr.response)
+          } else {
+            console.error('no file found')
+            alert("request file failed")
+          }
+        }
+      }
+    }
+    function startVideoToMp4() {
+      var url = document.getElementById("beforeTransforVideoUrl").value
+      if (url) {
+        getVideoDataAndTransformToMp4(url)
+      }
+    }
+
+    function arrangeWindow(i) {
+      oPlugin.JS_ArrangeWindow(i, false).then(function () {
+        console.log("JS_ArrangeWindow success")
+      })
+    }
+    function Stop() {
+      oPlugin.JS_Stop(iWind).then(function () {
+        console.log("JS_Stop success")
+      }, function () {
+        console.log("JS_Stop failed")
+      })
+    }
+    function Pause() {
+      oPlugin.JS_Pause(iWind).then(function () {
+        console.log("Pause success")
+      }, function () {
+        console.log("Pause failed")
+      })
+    }
+    function Resume() {
+      oPlugin.JS_Resume(iWind).then(function () {
+        console.log("Resume success")
+      }, function () {
+        console.log("Resume failed")
+      })
+    }
+    function Slow(i) {
+      oPlugin.JS_Slow(iWind).then(function () {
+        console.log("Slow success")
+      }, function () {
+        console.log("Slow failed")
+      })
+    }
+    function Fast() {
+      oPlugin.JS_Fast(iWind).then(function () {
+        console.log("Fast success")
+      }, function () {
+        console.log("Fast failed")
+      })
+    }
+    function FrameForward() {
+      oPlugin.JS_FrameForward(iWind).then(function () {
+        console.log("FrameForward success")
+      }, function () {
+        console.log("FrameForward failed")
+      })
+    }
+    function GetOSDTime() {
+      oPlugin.JS_GetOSDTime(iWind, "standard").then(function (time) {
+        let osd = time.year + "-" + time.month + "-" + time.day + " " + time.hour + ":" + time.minute + ":" + time.second
+        document.getElementById("error").innerHTML = "<div>OSD：" + osd + "</div>"
+      })
+    }
+    function OpenSound() {
+      var iRet = oPlugin.JS_OpenSound(iWind).then(function () {
+        console.log("JS_OpenSound success")
+      }, function () {
+        console.log("JS_OpenSound failed")
+      })
+    }
+    function CloseSound() {
+      oPlugin.JS_CloseSound(iWind).then(function () {
+        console.log("JS_CloseSound success")
+      }, function () {
+        console.log("JS_CloseSound failed")
+      })
+    }
+    function EnableZoom() {
+      oPlugin.JS_EnableZoom(iWind).then(function () {
+        console.log("EnableZoom success")
+      })
+    }
+    function DisableZoom() {
+      oPlugin.JS_DisableZoom(iWind).then(function () {
+        console.log("DisableZoom success")
+      })
+    }
+
+    function SetVolume() {
+      var iVolume = parseInt(document.getElementById("volume").value)
+      oPlugin.JS_SetVolume(iWind, iVolume).then(function () {
+        console.log("JS_SetVolume success")
+      }, function () {
+        console.log("JS_SetVolume failed")
+      })
+    }
+    function selectWnd() {
+      oPlugin.JS_SelectWnd(3).then(function () {
+        console.log("JS_SelectWnd success")
+      }, function () {
+        console.log("JS_SelectWnd failed")
+      })
+    }
+    function GetVolume() {
+      oPlugin.JS_GetVolume(iWind).then(function (i) {
+        console.log(i)
+        document.getElementById("error").innerHTML = "<div>Volume:" + i + "</div>"
+      })
+    }
+    function CapturePicture(szType) {
+      oPlugin.JS_CapturePicture(iWind, "img", szType).then(function () {
+        console.log("CapturePicture success")
+      }, function () {
+        console.log("CapturePicture failed")
+      })
+    }
+    function StopRealPlayAll() {
+      oPlugin.JS_StopRealPlayAll().then(function () {
+        console.log("JS_StopRealPlayAll success")
+      }, function () {
+        console.log("JS_StopRealPlayAll failed")
+      })
+    }
+    function dateFormat(oDate, fmt) {
+      var o = {
+        "M+": oDate.getMonth() + 1, //月份
+        "d+": oDate.getDate(), //日
+        "h+": oDate.getHours(), //小时
+        "m+": oDate.getMinutes(), //分
+        "s+": oDate.getSeconds(), //秒
+        "q+": Math.floor((oDate.getMonth() + 3) / 3), //季度
+        "S": oDate.getMilliseconds()//毫秒
+      }
+      if (/(y+)/.test(fmt)) {
+        fmt = fmt.replace(RegExp.$1, (oDate.getFullYear() + "").substr(4 - RegExp.$1.length))
+      }
+      for (var k in o) {
+        if (new RegExp("(" + k + ")").test(fmt)) {
+          fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)))
+        }
+      }
+      return fmt
+    }
+    function record() {
+      var szTime = dateFormat(new Date(), "yyyyMMddhhmmssS")
+      var targetType = 2  //PS 2 TS 3 RTP 4 MPEG4 5
+      var secretKey = document.getElementById("secretKey").value
+      oPlugin.JS_StartSaveEx(iWind, "video_" + szTime + ".mp4", targetType, {
+        secretKey: secretKey
+      }).then(function () {
+        console.log("record success")
+      }, function () {
+        console.log("record failed")
+      });;
+    }
+    function stopRecord() {
+      oPlugin.JS_StopSave(iWind).then(function () {
+        console.log("stopRecord success")
+      }, function () {
+        console.log("stopRecord failed")
+      })
+    }
+    function fullSreen() {
+      oPlugin.JS_FullScreenDisplay(true).then(function () {
+        console.log("JS_FullScreenDisplay success")
+      }, function () {
+        console.log("JS_FullScreenDisplay failed")
+      })
+    }
+    function fullScreenSingle() {
+      oPlugin.JS_FullScreenSingle(iWind).then(function () {
+        console.log("JS_FullScreenSingle success")
+      }, function () {
+        console.log("JS_FullScreenSingle failed")
+      })
+    }
+
+    window.onresize = function () {
+      if (playWind) {
+        var w = playWind.offsetWidth
+        var h = playWind.offsetHeight
+        oPlugin.JS_Resize(w, h).then(function () {
+          console.log("JS_Resize success to " + w + "x" + h)
+          // Update overlay positions after resize
+          setTimeout(updateAllOverlayPositions, 100)
+        }, function () {
+          console.log("JS_Resize failed")
+        })
+      }
+    }
+
+    function startEZUITalk() {
+      var accessToken = document.getElementById("accessToken").value
+      var serialNumber = document.getElementById("serialNumber").value
+      var channelNumber = document.getElementById("channelNumber").value
+      var domain = document.getElementById("domainValue").value
+
+      let oParams = {
+        accessToken: accessToken,
+        channelNo: channelNumber,
+        deviceSerial: serialNumber,
+        env: {
+          domain: domain
+        },
+      }
+      oPlugin.JS_StartEZUITalk(oParams, (info) => {
+        console.log("callback info ", info)
+      }).then(function () {
+        console.log("startTalk success")
+      }, function () {
+        console.log("startTalk failed")
+      })
+    }
+
+    function stopEZUITalk() {
+      oPlugin.JS_StopEZUITalk().then(function () {
+        console.log("stopTalk success")
+      }, function () {
+        console.log("stopTalk failed")
+      })
+    }
+
+    // Auto-arrange and play multiple cameras
+    function autoArrangeAndPlay() {
+      let num = cameras.length
+      if (num === 0) return
+      let n = Math.ceil(Math.sqrt(num))
+      let totalWindows = n * n
+      let videoResolution = document.getElementById("videoResolution").value
+      // Initialize offline status for all windows
+      for (let w = 0; w < totalWindows && w < num; w++) {
+        showOffline(w) // Show offline initially, will hide when first frame arrives
+      }
+      oPlugin.JS_ArrangeWindow(n, false).then(() => {
+        console.log(`Arranged ${n}x${n} = ${totalWindows} windows for ${num} cameras`)
+        // Update overlay positions after arranging
+        setTimeout(updateAllOverlayPositions, 200)
+        cameras.forEach((cam, w) => {
+          if (w >= totalWindows) return
+          if (cam.secretKey) {
+            oPlugin.JS_SetSecretKey(w, cam.secretKey).then(() => {
+              console.log(`Set secret key for window ${w}`)
+            }).catch((e) => {
+              console.log(`Set secret key failed for window ${w}`, e)
+              showOffline(w)
+            })
+          }
+          let url = `ezopen://open.ezviz.com/${cam.serialNumber}/${cam.channelNumber}`
+          if (videoResolution === "hd") {
+            url += ".hd.live"
+          } else {
+            url += ".live"
+          }
+          // Set timeout to detect offline cameras (15 seconds)
+          var timeoutId = setTimeout(() => {
+            if (offlineStatus[w] !== false) {
+              // Still offline after timeout
+              showOffline(w)
+            }
+          }, 15000)
+          oPlugin.JS_Play(url, {
+            playURL: url,
+            ezuikit: true,
+            env: { domain: cam.domain },
+            accessToken: cam.accessToken,
+            mode: "media"
+          }, w).then(() => {
+            console.log(`Live view started for window ${w} (${cam.serialNumber})`)
+            // Clear timeout if connection succeeds (firstFrameCallBack will confirm)
           }).catch((e) => {
-            console.log(`Set secret key failed for window ${w}`, e);
-          });
-        }
-        let url = `ezopen://open.ezviz.com/${cam.serialNumber}/${cam.channelNumber}`;
-        if (videoResolution === "hd") {
-          url += ".hd.live";
-        } else {
-          url += ".live";
-        }
-        oPlugin.JS_Play(url, {
-          playURL: url,
-          ezuikit: true,
-          env: { domain: cam.domain },
-          accessToken: cam.accessToken,
-          mode: "media"
-        }, w).then(() => {
-          console.log(`Live view started for window ${w} (${cam.serialNumber})`);
-        }).catch((e) => {
-          console.log(`Live view failed for window ${w} (${cam.serialNumber})`, e);
-        });
-      });
-    }).catch((e) => {
-      console.log("Arrange windows failed", e);
-    });
-  }
+            console.log(`Live view failed for window ${w} (${cam.serialNumber})`, e)
+            clearTimeout(timeoutId)
+            showOffline(w)
+          })
+        })
+      }).catch((e) => {
+        console.log("Arrange windows failed", e)
+      })
+    }
 
-  // Set params from URL, including arrays
-  function setFromUrl() {
-    const params = new URLSearchParams(window.location.search);
-    const map = {
-      token: "accessToken",
-      key: "secretKey",
-      domain: "domainValue"
-    };
-    Object.entries(map).forEach(([urlKey, inputId]) => {
-      const v = params.get(urlKey);
-      if (v) document.getElementById(inputId).value = v;
-    });
-    // Handle arrays
-    let sns = params.getAll('sn');
-    let chs = params.getAll('ch');
-    let keys = params.getAll('key');
-    if (keys.length === 0 && params.get('key')) keys = new Array(sns.length).fill(params.get('key'));
-    let tokens = params.getAll('token');
-    if (tokens.length === 0 && params.get('token')) tokens = new Array(sns.length).fill(params.get('token'));
-    let domains_arr = params.getAll('domain');
-    if (domains_arr.length === 0 && params.get('domain')) domains_arr = new Array(sns.length).fill(params.get('domain'));
-    cameras = [];
-    for (let i = 0; i < sns.length; i++) {
-      cameras.push({
-        serialNumber: sns[i],
-        channelNumber: parseInt(chs[i] || 1),
-        secretKey: keys[i] || '',
-        accessToken: tokens[i] || params.get('token') || '',
-        domain: domains_arr[i] || params.get('domain') || ''
-      });
+    // Set params from URL, including arrays
+    function setFromUrl() {
+      const params = new URLSearchParams(window.location.search)
+      const map = {
+        token: "accessToken",
+        key: "secretKey",
+        domain: "domainValue"
+      }
+      Object.entries(map).forEach(([urlKey, inputId]) => {
+        const v = params.get(urlKey)
+        if (v) document.getElementById(inputId).value = v
+      })
+      // Handle arrays
+      let sns = params.getAll('sn')
+      let chs = params.getAll('ch')
+      let keys = params.getAll('key')
+      if (keys.length === 0 && params.get('key')) keys = new Array(sns.length).fill(params.get('key'))
+      let tokens = params.getAll('token')
+      if (tokens.length === 0 && params.get('token')) tokens = new Array(sns.length).fill(params.get('token'))
+      let domains_arr = params.getAll('domain')
+      if (domains_arr.length === 0 && params.get('domain')) domains_arr = new Array(sns.length).fill(params.get('domain'))
+      cameras = []
+      for (let i = 0; i < sns.length; i++) {
+        cameras.push({
+          serialNumber: sns[i],
+          channelNumber: parseInt(chs[i] || 1),
+          secretKey: keys[i] || '',
+          accessToken: tokens[i] || params.get('token') || '',
+          domain: domains_arr[i] || params.get('domain') || ''
+        })
+      }
+      // Set single inputs for display
+      if (sns.length === 1) {
+        document.getElementById("serialNumber").value = sns[0]
+        document.getElementById("channelNumber").value = chs[0] || 1
+      } else if (sns.length > 1) {
+        document.getElementById("serialNumber").value = sns.join(',')
+        document.getElementById("channelNumber").value = chs.join(',')
+      }
+      // Check for capture param
+      if (params.get('capture') === 'true') {
+        shouldCapture = true
+      }
     }
-    // Set single inputs for display
-    if (sns.length === 1) {
-      document.getElementById("serialNumber").value = sns[0];
-      document.getElementById("channelNumber").value = chs[0] || 1;
-    } else if (sns.length > 1) {
-      document.getElementById("serialNumber").value = sns.join(',');
-      document.getElementById("channelNumber").value = chs.join(',');
-    }
-    // Check for capture param
-    if (params.get('capture') === 'true') {
-      shouldCapture = true;
-    }
-  }
 
-</script>
-<script>
-  // Run on load
-  setFromUrl();
-  if (cameras.length > 0) {
-    setTimeout(autoArrangeAndPlay, 500);
-  }
-</script>
+  </script>
+  <script>
+    // Run on load
+    setFromUrl()
+    if (cameras.length > 0) {
+      setTimeout(autoArrangeAndPlay, 500)
+    }
+  </script>
 </body>
 
 </html>
